@@ -7,14 +7,12 @@ import ResponseCodes from "../entity/ResponseCodes.ts";
 import swal from "sweetalert";
 import { Note } from "../entity/Note.ts";
 import {
-	AppBar,
 	Avatar,
 	Box,
 	Breadcrumbs,
 	Button,
 	Chip,
 	Divider,
-	Fab,
 	FormControl,
 	Grid,
 	IconButton,
@@ -38,17 +36,15 @@ import ThumbUpAltOutlinedIcon from "@mui/icons-material/ThumbUpAltOutlined";
 import CalendarMonthTwoToneIcon from "@mui/icons-material/CalendarMonthTwoTone";
 import {
 	ArrowBackIos,
-	ArrowBackIosNewOutlined,
 	ArrowForwardIos,
 	CloudUpload,
-	Navigation,
 	RemoveRedEyeTwoTone,
 	ThumbUpAltTwoTone,
 } from "@mui/icons-material";
 import { NoteUploadDialog } from "../components/NoteUploadDialog.tsx";
 
 export const NotePage = () => {
-	const [notes, setNotes] = useState<Note[]>([]);
+	const [noteList, setNoteList] = useState<Note[]>([]);
 	const pageSize: number = 10; // fixed page size for pagination
 	const [page, setPage] = useState<number>(0);
 	const [sortBy, setSortBy] = useState<string>("uploadDate");
@@ -65,9 +61,9 @@ export const NotePage = () => {
 					ascending: ascending,
 				},
 			})
-			.then((response: AxiosResponse<APIResponse<Note[]>>) => {
+			.then((response) => {
 				if (response.data.code == ResponseCodes.SUCCESS) {
-					setNotes(response.data.data);
+					setNoteList(response.data.data.content);
 				} else {
 					swal("Error", response.data.message, "error");
 				}
@@ -96,8 +92,8 @@ export const NotePage = () => {
 				},
 			})
 			.then((resp: AxiosResponse<APIResponse<Note[]>>) => {
-				if (resp.data.code != ResponseCodes.SUCCESS) {
-					setNotes(resp.data.data);
+				if (resp.data.code == ResponseCodes.SUCCESS) {
+					setNoteList(resp.data.data);
 				} else {
 					swal("Error", resp.data.message, "error");
 				}
@@ -105,19 +101,19 @@ export const NotePage = () => {
 	};
 
 	const [selectedTags, setSelectedTags] = useState<string[]>([]);
-	const [avaliableTags, setAvaliableTags] = useState<string[]>([
-		"asdf",
-		"fdas",
-		"kkk",
-	]);
+	const [avaliableTags, setAvaliableTags] = useState<string[]>([]);
 
 	useEffect(() => {
 		if (selectedTags.length > 0) {
 			axiosInstance
-				.post("note/get/tags", selectedTags.join(","))
+				.post("note/get/tags",0,{ 
+					params:{
+						tags:selectedTags.join(",")
+					}
+				})
 				.then((resp: AxiosResponse<APIResponse<Note[]>>) => {
 					if (resp.data.code == ResponseCodes.SUCCESS) {
-						setNotes(resp.data.data);
+						setNoteList(resp.data.data);
 					} else {
 						swal("Error", resp.data.message, "error");
 					}
@@ -193,9 +189,11 @@ export const NotePage = () => {
 					<Button
 						variant="contained"
 						startIcon={<CloudUpload />}
-						onClick={() => {}}
+						onClick={() => {
+							setShowDialog(true);
+						}}
 					>
-						Extended
+						Note Upload
 					</Button>
 				</Grid>
 				<Grid item>
@@ -291,17 +289,21 @@ export const NotePage = () => {
 				</Grid>
 				<Grid item xs={9}>
 					<List sx={{ width: "100%" }}>
-						{[0, 1, 2, 3].map((value) => (
-							<ListItem key={value} alignItems="flex-start" disablePadding>
+						{noteList.map((value) => (
+							<ListItem
+								key={value.noteId}
+								alignItems="flex-start"
+								disablePadding
+							>
 								<ListItemButton>
 									<ListItemAvatar>
 										<Avatar
 											alt="user avatar"
-											src="https://source.unsplash.com/random"
+											src={value.author.avatarUrl}
 										/>
 									</ListItemAvatar>
 									<ListItemText
-										primary={`Note ${value + 1}`}
+										primary={value.title}
 										secondary={
 											<Stack
 												direction="row"
@@ -318,7 +320,7 @@ export const NotePage = () => {
 														color="text.secondary"
 														sx={{ marginRight: "20px" }}
 													>
-														123
+														{value.viewCount}
 													</Typography>
 												</>
 												<>
@@ -327,15 +329,15 @@ export const NotePage = () => {
 														sx={{ marginRight: "3px" }}
 													/>
 													<Typography variant="body2" color="text.secondary">
-														123
+														{value.likeCount}
 													</Typography>
 												</>
 											</Stack>
 										}
 									/>
 									<Stack direction="row" spacing={1}>
-										{[0, 1, 2, 3].map(() => (
-											<Chip label="IBDP"></Chip>
+										{value.tags.map((tag) => (
+											<Chip label={tag.tagText}></Chip>
 										))}
 									</Stack>
 								</ListItemButton>
@@ -344,7 +346,7 @@ export const NotePage = () => {
 					</List>
 				</Grid>
 			</Grid>
-			<NoteUploadDialog open={true} setOpen={setShowDialog} />
+			<NoteUploadDialog open={showDialog} setOpen={setShowDialog} />
 		</>
 	);
 };

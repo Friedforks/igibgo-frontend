@@ -12,7 +12,7 @@ import {
 	TextField,
 	Toolbar,
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axiosInstance from "../utils/AxiosInstance.ts";
 import { AxiosResponse } from "axios";
 import { CloudUpload } from "@mui/icons-material";
@@ -165,6 +165,26 @@ const CustomHeader = () => {
 			});
 	};
 	const navigate = useNavigate();
+
+	useEffect(()=>{
+		// check login status
+		if(localStorage.getItem("token")!==null){
+			axiosInstance.post("/fuser/checkLogin",0,{
+				params:{
+					token:localStorage.getItem("token")
+				}
+			}).then((response:AxiosResponse<APIResponse<FUser>>)=>{
+				if(response.data.code==ResponseCodes.SUCCESS){
+					localStorage.setItem("userInfo",JSON.stringify(response.data.data));
+					setUserData(response.data.data);
+					setLoginStatus(true);
+				}else{
+					setLoginDialogOpen(true);
+					setLoginStatus(false);
+				}
+			})
+		}
+	},[])
 
 	return (
 		<>

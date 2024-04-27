@@ -1,4 +1,4 @@
-import { CloudUpload } from "@mui/icons-material";
+import { AddOutlined, CloudUpload, Delete } from "@mui/icons-material";
 import {
 	Box,
 	Button,
@@ -8,9 +8,11 @@ import {
 	DialogContent,
 	DialogContentText,
 	DialogTitle,
-	FormControl,
+	getGrid2UtilityClass,
+	IconButton,
 	Input,
 	InputLabel,
+	Menu,
 	MenuItem,
 	OutlinedInput,
 	Select,
@@ -19,11 +21,12 @@ import {
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../utils/AxiosInstance";
-import { AxiosResponse } from "axios";
+import axios, { AxiosResponse } from "axios";
 import APIResponse from "../entity/APIResponse";
 import swal from "sweetalert";
 import ResponseCodes from "../entity/ResponseCodes";
 import { FUser } from "../entity/FUser";
+import { Collection } from "../entity/Collection";
 
 type NoteUploadDialogProps = {
 	open: boolean;
@@ -36,8 +39,40 @@ export const NoteUploadDialog: React.FC<NoteUploadDialogProps> = ({
 }) => {
 	const [avaliableTags, setAvaliableTags] = useState<string[]>([]);
 	const [tagFieldValue, setTagFieldValue] = useState<string[]>([]);
+	const [collectionValue, setCollectionValue] = useState<string>("");
+	const [avaliableCollections, setAvaliableCollections] = useState<
+		Collection[]
+	>([]);
+	const [addCollectionDialogOpen, setAddCollectionDialogOpen] = useState(false);
 
-	useEffect(() => {
+	const getCollections = () => {
+		// get collections
+		const userInfo = localStorage.getItem("userInfo");
+		if (userInfo) {
+			const userId = (JSON.parse(userInfo) as FUser).userId;
+			axiosInstance
+				.get("/collection/get/userId", {
+					params: {
+						userId: userId,
+					},
+				})
+				.then((response: AxiosResponse<APIResponse<Collection[]>>) => {
+					if (response.data.code == ResponseCodes.SUCCESS) {
+						setAvaliableCollections(response.data.data);
+					} else {
+						swal("Error", response.data.message, "error");
+					}
+				});
+		} else {
+			swal(
+				"Error",
+				"You didn't successfully login. Please refresh the page",
+				"error"
+			);
+		}
+	};
+
+	const getTags = () => {
 		// fetch tags
 		axiosInstance
 			.get("/note/get/allTags")
@@ -48,26 +83,76 @@ export const NoteUploadDialog: React.FC<NoteUploadDialogProps> = ({
 					swal("Error", response.data.message, "error");
 				}
 			});
+	};
+
+	useEffect(() => {
+		getCollections();
+		getTags();
 	}, []);
+
+	const addCollectionSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+		event.preventDefault();
+		const formData = new FormData(event.currentTarget);
+		const collectionName = formData.get("collectionName") as string;
+		const userInfo = localStorage.getItem("userInfo");
+		if (userInfo) {
+			axiosInstance
+				.post("/collection/add", 0, {
+					params: {
+						collectionName: collectionName,
+						userId: (JSON.parse(userInfo) as FUser).userId,
+					},
+				})
+				.then((resp: AxiosResponse<APIResponse<null>>) => {
+					if (resp.data.code == ResponseCodes.SUCCESS) {
+						swal("Success", "Collection added successfully", "success");
+						setAddCollectionDialogOpen(false); // close the dialog
+						// update the avaliableCollections
+						getCollections();
+					} else {
+						swal("Error", resp.data.message, "error");
+					}
+				});
+		} else {
+			swal("Error", "Please refresh the page", "error");
+		}
+	};
 
 	const noteUplaodSubmit = (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
 		const formData = new FormData(event.currentTarget);
 		const noteFile = formData.get("noteFile") as File;
-        const title = formData.get("title") as string;
-        const tags=tagFieldValue.join(",");
-        const userInfo=JSON.parse(localStorage.getItem("userInfo") as string) as FUser;
-        if (noteFile == null) {
-            swal("Error", "Please select a file to upload", "error");
-            return;
-        }
-        const data=new FormData();
-        data.append("note",noteFile);
-        data.append("title",title);
-        data.append("authorId",userInfo.userId.toString());
-        data.append("tags",tags);
-        data.append("collectionId","");
-        // TBD
+		const title = formData.get("title") as string;
+		const tags = tagFieldValue.join(",");
+		const userInfo = JSON.parse(
+			localStorage.getItem("userInfo") as string
+		) as FUser;
+		if (userInfo == null) {
+			swal("Error", "Please login first", "error");
+			return;
+		}
+		if (noteFile == null) {
+			swal("Error", "Please select a file to upload", "error");
+			return;
+		}
+		const collectionId = collectionValue;
+		const data = new FormData();
+		data.append("note", noteFile);
+		data.append("authorId", userInfo.userId.toString());
+		data.append("collectionId", collectionId);
+		data.append("title", title);
+		data.append("tags", tags);
+		console.log("collectionId"+collectionId)
+		axiosInstance
+			.post("/note/upload", data)
+			.then((resp: AxiosResponse<APIResponse<null>>) => {
+				if (resp.data.code == ResponseCodes.SUCCESS) {
+					swal("Success", "Note uploaded successfully", "success");
+					setOpen(false);
+				} else {
+					swal("Error", resp.data.message, "error");
+				}
+			});
 	};
 
 	const handleTagSelectChange = (event: SelectChangeEvent) => {
@@ -79,10 +164,12 @@ export const NoteUploadDialog: React.FC<NoteUploadDialogProps> = ({
 
 	return (
 		<>
+			{/* Note upload dialog */}
 			<Dialog
 				open={open}
 				onClose={() => {
 					setOpen(false);
+					console.log("open");
 				}}
 				PaperProps={{
 					component: "form",
@@ -105,7 +192,12 @@ export const NoteUploadDialog: React.FC<NoteUploadDialogProps> = ({
 						>
 							Upload Note (PDF)
 						</Button>
-						<input type="file" hidden name="e" style={{ display: "none" }} />
+						<input
+							name="noteFile"
+							type="file"
+							hidden
+							style={{ display: "none" }}
+						/>
 					</label>
 					<TextField
 						autoFocus
@@ -138,13 +230,40 @@ export const NoteUploadDialog: React.FC<NoteUploadDialogProps> = ({
 								</Box>
 							)}
 						>
-							{["asdf", "22", "4"].map((name, id) => (
+							{["IGCSE","Chemistry","History","Physics","IBDP", "CS", "Huili","Handout","Homework","Note","Original"].map((name, id) => (
 								<MenuItem key={id} value={name}>
 									{name}
 								</MenuItem>
 							))}
 						</Select>
 					</label>
+					<label>
+						<InputLabel id="demo-multiple-chip-label">Collection:</InputLabel>
+						<Select
+							name="collection"
+							value={collectionValue}
+							fullWidth
+							onChange={(event) => {
+								setCollectionValue(event.target.value as string);
+							}}
+						>
+							{avaliableCollections.map((collection) => (
+								<MenuItem value={collection.collectionId}>
+									{collection.collectionName}
+								</MenuItem>
+							))}
+						</Select>
+					</label>
+					<Button
+						variant="outlined"
+						startIcon={<AddOutlined />}
+						sx={{ marginTop: "10px" }}
+						onClick={() => {
+							setAddCollectionDialogOpen(true);
+						}}
+					>
+						Add collection
+					</Button>
 				</DialogContent>
 				<DialogActions>
 					<Button
@@ -154,7 +273,46 @@ export const NoteUploadDialog: React.FC<NoteUploadDialogProps> = ({
 					>
 						Cancel
 					</Button>
-					<Button type="submit">Register</Button>
+					<Button type="submit">Submit</Button>
+				</DialogActions>
+			</Dialog>
+
+			{/* Add collection dialog */}
+			<Dialog
+				open={addCollectionDialogOpen}
+				onClose={() => {
+					setAddCollectionDialogOpen(false);
+				}}
+				PaperProps={{
+					component: "form",
+					onSubmit: addCollectionSubmit,
+				}}
+			>
+				<DialogTitle>Add a new collection</DialogTitle>
+				<DialogContent>
+					<DialogContentText>
+						You can use collections to organize your notes into series. Such as
+						"IBDP CS notes"
+					</DialogContentText>
+					<TextField
+						required
+						margin="dense"
+						name="collectionName"
+						label="Collection name:"
+						type="text"
+						fullWidth
+						variant="standard"
+					/>
+				</DialogContent>
+				<DialogActions>
+					<Button
+						onClick={() => {
+							setAddCollectionDialogOpen(false);
+						}}
+					>
+						Cancel
+					</Button>
+					<Button type="submit">Submit</Button>
 				</DialogActions>
 			</Dialog>
 		</>

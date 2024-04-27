@@ -10,7 +10,7 @@ import {
     Divider,
     Grid,
     List,
-    ListItem, ListItemAvatar, ListItemButton, ListItemIcon, ListItemText, Stack,
+    ListItem, ListItemAvatar, ListItemButton, ListItemText, Stack,
     Typography
 } from "@mui/material";
 import {useEffect, useState} from "react";
