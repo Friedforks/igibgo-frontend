@@ -194,7 +194,9 @@ const CustomHeader = () => {
 						<Grid container justifyContent="space-between">
 							<Grid item>
 								<Box display="flex" alignItems="center">
-									<div> Welcome to Study Hive!</div>
+									<div onClick={()=>{
+										navigate("/")
+									}}> Welcome to Study Hive!</div>
 									{/*</Typography>*/}
 									<Button
 										color="inherit"

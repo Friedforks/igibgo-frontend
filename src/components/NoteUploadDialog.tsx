@@ -123,7 +123,7 @@ export const NoteUploadDialog: React.FC<NoteUploadDialogProps> = ({
 		const formData = new FormData(event.currentTarget);
 		const noteFile = formData.get("noteFile") as File;
 		const title = formData.get("title") as string;
-		const tags = tagFieldValue.join(",");
+		const tags = formData.get("tags") as string;
 		const userInfo = JSON.parse(
 			localStorage.getItem("userInfo") as string
 		) as FUser;
@@ -209,34 +209,16 @@ export const NoteUploadDialog: React.FC<NoteUploadDialogProps> = ({
 						fullWidth
 						variant="standard"
 					/>
-					<label>
-						<InputLabel id="demo-multiple-chip-label">
-							Tags for the note*:
-						</InputLabel>
-						<Select
-							labelId="demo-multiple-chip-label"
-							label="Tags"
-							multiple
-							name="tags"
-							value={tagFieldValue}
-							sx={{ width: "100%" }}
-							onChange={handleTagSelectChange}
-							input={<OutlinedInput id="select-multiple-chip" label="Chip" />}
-							renderValue={(selected) => (
-								<Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
-									{selected.map((value) => (
-										<Chip key={value} label={value} />
-									))}
-								</Box>
-							)}
-						>
-							{["IGCSE","Chemistry","History","Physics","IBDP", "CS", "Huili","Handout","Homework","Note","Original"].map((name, id) => (
-								<MenuItem key={id} value={name}>
-									{name}
-								</MenuItem>
-							))}
-						</Select>
-					</label>
+					<TextField
+						autoFocus
+						required
+						margin="dense"
+						name="tags"
+						label="Tags (separate with comma):"
+						type="text"
+						fullWidth
+						variant="standard"
+					/>
 					<label>
 						<InputLabel id="demo-multiple-chip-label">Collection:</InputLabel>
 						<Select

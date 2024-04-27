@@ -42,33 +42,81 @@ import {
 	ThumbUpAltTwoTone,
 } from "@mui/icons-material";
 import { NoteUploadDialog } from "../components/NoteUploadDialog.tsx";
+import { useNavigate } from "react-router-dom";
 
 export const NotePage = () => {
 	const [noteList, setNoteList] = useState<Note[]>([]);
-	const pageSize: number = 10; // fixed page size for pagination
+	const pageSize: number = 1; // fixed page size for pagination
 	const [page, setPage] = useState<number>(0);
 	const [sortBy, setSortBy] = useState<string>("uploadDate");
 	const [ascending, setAscending] = useState<boolean>(false);
 	const [showDialog, setShowDialog] = useState<boolean>(false);
+	const [totalPages, setTotalPages] = useState<number>(0);
+	const [selectedTags, setSelectedTags] = useState<string[]>([]);
+	const [avaliableTags, setAvaliableTags] = useState<string[]>([]);
+	const [searchBarValue, setSearchBarValue] = useState<string>("");
+	const navigate = useNavigate();
 	useEffect(() => {
-		// fetch note
-		axiosInstance
-			.get("/note/get/order", {
-				params: {
-					page: 0,
-					size: 10,
-					orderBy: sortBy,
-					ascending: ascending,
-				},
-			})
-			.then((response) => {
-				if (response.data.code == ResponseCodes.SUCCESS) {
-					setNoteList(response.data.data.content);
-				} else {
-					swal("Error", response.data.message, "error");
-				}
-			});
-	}, [sortBy, page, ascending]);
+		// fetch note with tags
+		if (selectedTags.length > 0) {
+			axiosInstance
+				.get("note/get/tags", {
+					params: {
+						tags: selectedTags.join(","),
+						page: page,
+						size: pageSize,
+						orderBy: sortBy,
+						ascending: ascending,
+					},
+				})
+				.then((resp) => {
+					if (resp.data.code == ResponseCodes.SUCCESS) {
+						setNoteList(resp.data.data.content);
+						setTotalPages(resp.data.data.totalPages);
+					} else {
+						swal("Error", resp.data.message, "error");
+					}
+				});
+		} else if (searchBarValue.length > 0) {
+			axiosInstance
+				.get("/note/get/title", {
+					params: {
+						title: searchBarValue,
+						page: page,
+						size: pageSize,
+						orderBy: sortBy,
+						ascending: ascending,
+					},
+				})
+				.then((resp) => {
+					if (resp.data.code == ResponseCodes.SUCCESS) {
+						setNoteList(resp.data.data.content);
+						setTotalPages(resp.data.data.totalPages);
+					} else {
+						swal("Error", resp.data.message, "error");
+					}
+				});
+		} else {
+			// fetch note
+			axiosInstance
+				.get("/note/get/order", {
+					params: {
+						page: page,
+						size: pageSize,
+						orderBy: sortBy,
+						ascending: ascending,
+					},
+				})
+				.then((response) => {
+					if (response.data.code == ResponseCodes.SUCCESS) {
+						setNoteList(response.data.data.content);
+						setTotalPages(response.data.data.totalPages);
+					} else {
+						swal("Error", response.data.message, "error");
+					}
+				});
+		}
+	}, [sortBy, page, ascending, avaliableTags, searchBarValue, selectedTags]);
 
 	useEffect(() => {
 		// fetch tags
@@ -85,41 +133,8 @@ export const NotePage = () => {
 
 	const findNotes = (event: React.ChangeEvent<HTMLInputElement>) => {
 		event.preventDefault();
-		axiosInstance
-			.get("/note/get/title", {
-				params: {
-					title: event.target.value,
-				},
-			})
-			.then((resp: AxiosResponse<APIResponse<Note[]>>) => {
-				if (resp.data.code == ResponseCodes.SUCCESS) {
-					setNoteList(resp.data.data);
-				} else {
-					swal("Error", resp.data.message, "error");
-				}
-			});
+		setSearchBarValue(event.target.value);
 	};
-
-	const [selectedTags, setSelectedTags] = useState<string[]>([]);
-	const [avaliableTags, setAvaliableTags] = useState<string[]>([]);
-
-	useEffect(() => {
-		if (selectedTags.length > 0) {
-			axiosInstance
-				.post("note/get/tags",0,{ 
-					params:{
-						tags:selectedTags.join(",")
-					}
-				})
-				.then((resp: AxiosResponse<APIResponse<Note[]>>) => {
-					if (resp.data.code == ResponseCodes.SUCCESS) {
-						setNoteList(resp.data.data);
-					} else {
-						swal("Error", resp.data.message, "error");
-					}
-				});
-		}
-	}, [selectedTags]); // This useEffect hook will run every time selectedTags changes
 
 	const handleTagSelectChange = (event: SelectChangeEvent) => {
 		const {
@@ -140,7 +155,14 @@ export const NotePage = () => {
 			>
 				<Grid item xs={3}>
 					<Breadcrumbs aria-label="breadcrumb">
-						<div>Home</div>
+						<div
+							onClick={() => {
+								navigate("/");
+							}}
+						>
+							Home
+						</div>
+
 						<Typography color="text.primary">Notes</Typography>
 					</Breadcrumbs>
 				</Grid>
@@ -150,20 +172,34 @@ export const NotePage = () => {
 						label="Find Notes"
 						variant="outlined"
 						onChange={findNotes}
+						value={searchBarValue}
 					/>
 				</Grid>
 				<Grid item>
 					<FormControl sx={{ m: 1, width: 300 }}>
-						<InputLabel id="demo-multiple-chip-label">Find tags</InputLabel>
+						<InputLabel id="demo-multiple-chip-label">
+							Find tags
+						</InputLabel>
 						<Select
 							labelId="demo-multiple-chip-label"
 							id="demo-multiple-chip"
 							multiple
 							value={selectedTags}
 							onChange={handleTagSelectChange}
-							input={<OutlinedInput id="select-multiple-chip" label="Chip" />}
+							input={
+								<OutlinedInput
+									id="select-multiple-chip"
+									label="Chip"
+								/>
+							}
 							renderValue={(selected) => (
-								<Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
+								<Box
+									sx={{
+										display: "flex",
+										flexWrap: "wrap",
+										gap: 0.5,
+									}}
+								>
 									{selected.map((value) => (
 										<Chip key={value} label={value} />
 									))}
@@ -203,9 +239,13 @@ export const NotePage = () => {
 						onClick={() => {
 							page > 0 ? setPage(page - 1) : setPage(0);
 						}}
+						disabled={page == 0}
 					>
 						<ArrowBackIos fontSize="inherit" />
 					</IconButton>
+				</Grid>
+				<Grid item>
+					<Typography>{page + 1}</Typography>
 				</Grid>
 				<Grid item>
 					<IconButton
@@ -214,6 +254,7 @@ export const NotePage = () => {
 						onClick={() => {
 							setPage(page + 1);
 						}}
+						disabled={page == totalPages - 1}
 					>
 						<ArrowForwardIos fontSize="inherit" />
 					</IconButton>
@@ -307,18 +348,27 @@ export const NotePage = () => {
 										secondary={
 											<Stack
 												direction="row"
-												divider={<Divider orientation="vertical" flexItem />}
+												divider={
+													<Divider
+														orientation="vertical"
+														flexItem
+													/>
+												}
 												spacing={1}
 											>
 												<>
 													<VisibilityOutlinedIcon
 														fontSize="small"
-														sx={{ marginRight: "3px" }}
+														sx={{
+															marginRight: "3px",
+														}}
 													/>
 													<Typography
 														variant="body2"
 														color="text.secondary"
-														sx={{ marginRight: "20px" }}
+														sx={{
+															marginRight: "20px",
+														}}
 													>
 														{value.viewCount}
 													</Typography>
@@ -326,9 +376,14 @@ export const NotePage = () => {
 												<>
 													<ThumbUpAltOutlinedIcon
 														fontSize="small"
-														sx={{ marginRight: "3px" }}
+														sx={{
+															marginRight: "3px",
+														}}
 													/>
-													<Typography variant="body2" color="text.secondary">
+													<Typography
+														variant="body2"
+														color="text.secondary"
+													>
 														{value.likeCount}
 													</Typography>
 												</>
