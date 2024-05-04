@@ -269,7 +269,7 @@ export const NotePage = () => {
 				<Grid item xs={3}>
 					<Box sx={{ width: "100%" }}>
 						<List>
-							<ListItem disablePadding>
+							<ListItem disablePadding >
 								<ListItemButton>
 									<ListItemIcon>
 										<CalendarMonthTwoToneIcon />
