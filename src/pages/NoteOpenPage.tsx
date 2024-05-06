@@ -1,8 +1,7 @@
-import { Grid, ListItemIcon, Skeleton, Stack, Typography } from "@mui/material";
+import { Grid, Skeleton, Stack, Typography } from "@mui/material";
 import CustomHeader from "../components/CustomHeader";
 import {
 	StarBorderOutlined,
-	StarOutlined,
 	ThumbUpOutlined,
 	VisibilityOutlined,
 } from "@mui/icons-material";
@@ -12,19 +11,27 @@ import { AxiosResponse } from "axios";
 import APIResponse from "../entity/APIResponse";
 import { Note } from "../entity/Note";
 import { ShortUserInfoDisplay } from "../components/ShortUserInfoDisplay";
+import { FUser } from "../entity/FUser";
 
 export const NoteOpenPage = () => {
-	const [currentNote, setCurrentNote] = useState<Note>(null);
+	const [currentNote, setCurrentNote] = useState<Note>();
 	const [loading, setLoading] = useState(true);
 	const [height, setHeight] = useState(window.innerHeight);
 	const [totalLike, setTotalLike] = useState<number>(0);
 	const [totalSave, setTotalSave] = useState<number>(0);
+	const [totalView, setTotalView] = useState<number>(0);
+	const currentNoteId = "56f782e9-0887-4688-9b32-64bde9d76124";
 	useEffect(() => {
 		setHeight(window.innerHeight);
+		const userInfo = JSON.parse(
+			localStorage.getItem("userInfo") as string
+		) as FUser;
+		const userId = userInfo.userId;
 		axiosInstance
 			.get("/note/get/noteId", {
 				params: {
-					noteId: "56f782e9-0887-4688-9b32-64bde9d76124",
+					noteId: currentNoteId,
+					userId: userId,
 				},
 			})
 			.then((response: AxiosResponse<APIResponse<Note>>) => {
@@ -38,9 +45,40 @@ export const NoteOpenPage = () => {
 				setCurrentNote(resposneData);
 				setLoading(false);
 			});
+
+		// query for note statistics
+		axiosInstance
+			.get("/note/total/like", {
+				params: {
+					noteId: currentNoteId,
+				},
+			})
+			.then((response) => {
+				setTotalLike(response.data.data);
+			});
+
+		axiosInstance
+			.get("/note/total/save", {
+				params: {
+					noteId: currentNoteId,
+				},
+			})
+			.then((response) => {
+				setTotalSave(response.data.data);
+			});
+		axiosInstance
+			.get("/note/total/view", {
+				params: {
+					noteId: currentNoteId,
+				},
+			})
+			.then((response) => {
+				setTotalView(response.data.data);
+			});
 	}, []);
 
 	useEffect(() => {
+		if (currentNote === undefined) return;
 		axiosInstance
 			.get("/fuser/total/like", {
 				params: {
@@ -97,19 +135,19 @@ export const NoteOpenPage = () => {
 							<div>
 								<Stack direction="row" spacing={0.5}>
 									<ThumbUpOutlined fontSize="small" />
-									<span>{currentNote?.likeCount}</span>
+									<span>{totalLike}</span>
 								</Stack>
 							</div>
 							<div>
 								<Stack direction="row" spacing={0.5}>
 									<VisibilityOutlined fontSize="small" />
-									<span>{currentNote?.viewCount}</span>
+									<span>{totalView}</span>
 								</Stack>
 							</div>
 							<div>
 								<Stack direction="row" spacing={0.5}>
 									<StarBorderOutlined fontSize="small" />
-									<span>{currentNote?.saveCount}</span>
+									<span>{totalSave}</span>
 								</Stack>
 							</div>
 							<div>{currentNote?.uploadDate.toString()}</div>
@@ -134,9 +172,7 @@ export const NoteOpenPage = () => {
 					>
 						<div>
 							<Stack spacing={0.5} alignItems="center">
-								{
-									
-								}
+								{}
 								<ThumbUpOutlined fontSize="large" />
 								<span>{totalLike}</span>
 							</Stack>
