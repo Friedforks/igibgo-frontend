@@ -1,32 +1,24 @@
-import { AddOutlined, CloudUpload, Delete } from "@mui/icons-material";
+import { AddOutlined, CloudUpload } from "@mui/icons-material";
 import {
-	Box,
 	Button,
-	Chip,
 	Dialog,
 	DialogActions,
 	DialogContent,
 	DialogContentText,
 	DialogTitle,
-	getGrid2UtilityClass,
-	IconButton,
-	Input,
 	InputLabel,
-	Menu,
 	MenuItem,
-	OutlinedInput,
 	Select,
-	SelectChangeEvent,
 	TextField,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../utils/AxiosInstance";
-import axios, { AxiosResponse } from "axios";
 import APIResponse from "../entity/APIResponse";
 import swal from "sweetalert";
 import ResponseCodes from "../entity/ResponseCodes";
 import { FUser } from "../entity/FUser";
 import { Collection } from "../entity/Collection";
+import { AxiosResponse } from "axios";
 
 type NoteUploadDialogProps = {
 	open: boolean;
@@ -37,13 +29,14 @@ export const NoteUploadDialog: React.FC<NoteUploadDialogProps> = ({
 	open,
 	setOpen,
 }) => {
-	const [avaliableTags, setAvaliableTags] = useState<string[]>([]);
+	const [availableTags, setAvailableTags] = useState<string[]>([]);
 	const [tagFieldValue, setTagFieldValue] = useState<string[]>([]);
 	const [collectionValue, setCollectionValue] = useState<string>("");
-	const [avaliableCollections, setAvaliableCollections] = useState<
+	const [availableCollections, setAvailableCollections] = useState<
 		Collection[]
 	>([]);
-	const [addCollectionDialogOpen, setAddCollectionDialogOpen] = useState(false);
+	const [addCollectionDialogOpen, setAddCollectionDialogOpen] =
+		useState(false);
 
 	const getCollections = () => {
 		// get collections
@@ -58,7 +51,7 @@ export const NoteUploadDialog: React.FC<NoteUploadDialogProps> = ({
 				})
 				.then((response: AxiosResponse<APIResponse<Collection[]>>) => {
 					if (response.data.code == ResponseCodes.SUCCESS) {
-						setAvaliableCollections(response.data.data);
+						setAvailableCollections(response.data.data);
 					} else {
 						swal("Error", response.data.message, "error");
 					}
@@ -78,7 +71,7 @@ export const NoteUploadDialog: React.FC<NoteUploadDialogProps> = ({
 			.get("/note/get/allTags")
 			.then((response: AxiosResponse<APIResponse<string[]>>) => {
 				if (response.data.code == ResponseCodes.SUCCESS) {
-					setAvaliableTags(response.data.data);
+					setAvailableTags(response.data.data);
 				} else {
 					swal("Error", response.data.message, "error");
 				}
@@ -105,9 +98,13 @@ export const NoteUploadDialog: React.FC<NoteUploadDialogProps> = ({
 				})
 				.then((resp: AxiosResponse<APIResponse<null>>) => {
 					if (resp.data.code == ResponseCodes.SUCCESS) {
-						swal("Success", "Collection added successfully", "success");
+						swal(
+							"Success",
+							"Collection added successfully",
+							"success"
+						);
 						setAddCollectionDialogOpen(false); // close the dialog
-						// update the avaliableCollections
+						// update the availableCollections
 						getCollections();
 					} else {
 						swal("Error", resp.data.message, "error");
@@ -118,7 +115,7 @@ export const NoteUploadDialog: React.FC<NoteUploadDialogProps> = ({
 		}
 	};
 
-	const noteUplaodSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+	const noteUploadSubmit = (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
 		const formData = new FormData(event.currentTarget);
 		const noteFile = formData.get("noteFile") as File;
@@ -142,7 +139,7 @@ export const NoteUploadDialog: React.FC<NoteUploadDialogProps> = ({
 		data.append("collectionId", collectionId);
 		data.append("title", title);
 		data.append("tags", tags);
-		console.log("collectionId"+collectionId)
+		console.log("collectionId" + collectionId);
 		axiosInstance
 			.post("/note/upload", data)
 			.then((resp: AxiosResponse<APIResponse<null>>) => {
@@ -155,12 +152,12 @@ export const NoteUploadDialog: React.FC<NoteUploadDialogProps> = ({
 			});
 	};
 
-	const handleTagSelectChange = (event: SelectChangeEvent) => {
-		const {
-			target: { value },
-		} = event;
-		setTagFieldValue(typeof value === "string" ? value.split(",") : value);
-	};
+	// const handleTagSelectChange = (event: SelectChangeEvent) => {
+	// 	const {
+	// 		target: { value },
+	// 	} = event;
+	// 	setTagFieldValue(typeof value === "string" ? value.split(",") : value);
+	// };
 
 	return (
 		<>
@@ -173,15 +170,15 @@ export const NoteUploadDialog: React.FC<NoteUploadDialogProps> = ({
 				}}
 				PaperProps={{
 					component: "form",
-					onSubmit: noteUplaodSubmit,
+					onSubmit: noteUploadSubmit,
 				}}
 			>
 				<DialogTitle>Upload your own note!</DialogTitle>
 				<DialogContent>
 					<DialogContentText>
 						Study hive is a platform for sharing knowledges.
-						<b>Every user </b>can share their notes with others. Please upload
-						your note <b>in .pdf format</b> here.
+						<b>Every user </b>can share their notes with others.
+						Please upload your note <b>in .pdf format</b> here.
 					</DialogContentText>
 					<label>
 						<Button
@@ -220,16 +217,20 @@ export const NoteUploadDialog: React.FC<NoteUploadDialogProps> = ({
 						variant="standard"
 					/>
 					<label>
-						<InputLabel id="demo-multiple-chip-label">Collection:</InputLabel>
+						<InputLabel id="demo-multiple-chip-label">
+							Collection:
+						</InputLabel>
 						<Select
 							name="collection"
 							value={collectionValue}
 							fullWidth
 							onChange={(event) => {
-								setCollectionValue(event.target.value as string);
+								setCollectionValue(
+									event.target.value as string
+								);
 							}}
 						>
-							{avaliableCollections.map((collection) => (
+							{availableCollections.map((collection) => (
 								<MenuItem value={collection.collectionId}>
 									{collection.collectionName}
 								</MenuItem>
@@ -273,8 +274,8 @@ export const NoteUploadDialog: React.FC<NoteUploadDialogProps> = ({
 				<DialogTitle>Add a new collection</DialogTitle>
 				<DialogContent>
 					<DialogContentText>
-						You can use collections to organize your notes into series. Such as
-						"IBDP CS notes"
+						You can use collections to organize your notes into
+						series. Such as "IBDP CS notes"
 					</DialogContentText>
 					<TextField
 						required

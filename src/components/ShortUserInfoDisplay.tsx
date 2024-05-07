@@ -12,15 +12,18 @@ import {
 
 type ShortUserInfoDisplayProps = {
 	userId: number | undefined;
+	dataUpdateRequired: boolean;
 };
 export const ShortUserInfoDisplay: React.FC<ShortUserInfoDisplayProps> = ({
 	userId,
+	dataUpdateRequired,
 }) => {
 	const [user, setUser] = useState<FUser>();
 	const [totalView, setTotalView] = useState<number>(0);
 	const [totalLike, setTotalLike] = useState<number>(0);
 	const [totalSave, setTotalSave] = useState<number>(0);
 	useEffect(() => {
+		console.log("short user info display data updated with flag", dataUpdateRequired);
 		axiosInstance
 			.get("/fuser/userId", {
 				params: {
@@ -58,7 +61,7 @@ export const ShortUserInfoDisplay: React.FC<ShortUserInfoDisplayProps> = ({
 			.then((response: AxiosResponse<APIResponse<number>>) => {
 				setTotalView(response.data.data);
 			});
-	}, []);
+	}, [dataUpdateRequired, userId]);
 	return (
 		<Stack direction="row" spacing={2}>
 			<Avatar alt="Author avatar" src={user?.avatarUrl} />
