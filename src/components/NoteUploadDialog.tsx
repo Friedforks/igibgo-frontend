@@ -10,6 +10,7 @@ import {
 	MenuItem,
 	Select,
 	TextField,
+	Typography,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../utils/AxiosInstance";
@@ -88,6 +89,9 @@ export const NoteUploadDialog: React.FC<NoteUploadDialogProps> = ({
 		const formData = new FormData(event.currentTarget);
 		const collectionName = formData.get("collectionName") as string;
 		const userInfo = localStorage.getItem("userInfo");
+		if (collectionName.trim() === "") {
+			swal("Error", "Collection name cannot be empty", "error");
+		}
 		if (userInfo) {
 			axiosInstance
 				.post("/collection/add", 0, {
@@ -139,6 +143,18 @@ export const NoteUploadDialog: React.FC<NoteUploadDialogProps> = ({
 		data.append("collectionId", collectionId);
 		data.append("title", title);
 		data.append("tags", tags);
+		if(title == null || title == ""){
+			swal("Error", "Please enter title", "error");
+			return;
+		}
+		if(tags == null || tags == ""){
+			swal("Error", "Please enter tags", "error");
+			return;
+		}
+		if(collectionId == null || collectionId == ""){
+			swal("Error", "Please select a collection", "error");
+			return;
+		}
 		console.log("collectionId" + collectionId);
 		axiosInstance
 			.post("/note/upload", data)
@@ -152,12 +168,13 @@ export const NoteUploadDialog: React.FC<NoteUploadDialogProps> = ({
 			});
 	};
 
-	// const handleTagSelectChange = (event: SelectChangeEvent) => {
-	// 	const {
-	// 		target: { value },
-	// 	} = event;
-	// 	setTagFieldValue(typeof value === "string" ? value.split(",") : value);
-	// };
+	const [file, setFile] = useState<File>();
+	const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+		const file = event.target.files ? event.target.files[0] : null; // Safely access files array
+		if (file) {
+			setFile(file);
+		}
+	};
 
 	return (
 		<>
@@ -194,7 +211,11 @@ export const NoteUploadDialog: React.FC<NoteUploadDialogProps> = ({
 							type="file"
 							hidden
 							style={{ display: "none" }}
+							onChange={handleFileChange}
 						/>
+						<Typography variant="caption" style={{marginLeft:"5px"}}>
+							{file && file.name}
+						</Typography>
 					</label>
 					<TextField
 						autoFocus

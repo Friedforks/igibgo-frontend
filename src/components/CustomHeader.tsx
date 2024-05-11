@@ -29,7 +29,8 @@ const CustomHeader = () => {
 	const [registerDialog2Open, setRegisterDialog2Open] =
 		useState<boolean>(false);
 	const [loginDialogOpen, setLoginDialogOpen] = useState<boolean>(false);
-	const [registerDialogOpen, setRegisterDialogOpen] = useState<boolean>(false);
+	const [registerDialogOpen, setRegisterDialogOpen] =
+		useState<boolean>(false);
 	const handleLoginClick = () => {
 		// 1. open modal
 		setLoginDialogOpen(true);
@@ -57,10 +58,14 @@ const CustomHeader = () => {
 			.then((response: AxiosResponse<APIResponse<FUser>>) => {
 				if (response.data.code == ResponseCodes.SUCCESS) {
 					localStorage.setItem("token", response.data.data.token);
-					localStorage.setItem("userInfo",JSON.stringify(response.data.data));
+					localStorage.setItem(
+						"userInfo",
+						JSON.stringify(response.data.data)
+					);
 					swal(
 						"Success!",
-						"Login successfully! Welcome :" + response.data.data.username,
+						"Login successfully! Welcome :" +
+							response.data.data.username,
 						"success"
 					);
 					setUserData(response.data.data);
@@ -165,25 +170,39 @@ const CustomHeader = () => {
 	};
 	const navigate = useNavigate();
 
-	useEffect(()=>{
+	useEffect(() => {
 		// check login status
-		if(localStorage.getItem("token")!==null){
-			axiosInstance.post("/fuser/checkLogin",0,{
-				params:{
-					token:localStorage.getItem("token")
-				}
-			}).then((response:AxiosResponse<APIResponse<FUser>>)=>{
-				if(response.data.code==ResponseCodes.SUCCESS){
-					localStorage.setItem("userInfo",JSON.stringify(response.data.data));
-					setUserData(response.data.data);
-					setLoginStatus(true);
-				}else{
-					setLoginDialogOpen(true);
-					setLoginStatus(false);
-				}
-			})
+		if (localStorage.getItem("token") !== null) {
+			axiosInstance
+				.post("/fuser/checkLogin", 0, {
+					params: {
+						token: localStorage.getItem("token"),
+					},
+				})
+				.then((response: AxiosResponse<APIResponse<FUser>>) => {
+					if (response.data.code == ResponseCodes.SUCCESS) {
+						localStorage.setItem(
+							"userInfo",
+							JSON.stringify(response.data.data)
+						);
+						setUserData(response.data.data);
+						setLoginStatus(true);
+					} else {
+						setLoginDialogOpen(true);
+						setLoginStatus(false);
+					}
+				});
 		}
-	},[])
+	}, []);
+
+	const handleUserAvatarClick = () => {
+		const userId = userData?.userId;
+		if (userId) {
+			navigate(`/user/${userId}`);
+		} else {
+			swal("Error", "You are not logged in", "error");
+		}
+	};
 
 	return (
 		<>
@@ -193,9 +212,14 @@ const CustomHeader = () => {
 						<Grid container justifyContent="space-between">
 							<Grid item>
 								<Box display="flex" alignItems="center">
-									<div onClick={()=>{
-										navigate("/")
-									}}> Welcome to Study Hive!</div>
+									<div
+										onClick={() => {
+											navigate("/");
+										}}
+									>
+										{" "}
+										Welcome to Study Hive!
+									</div>
 									{/*</Typography>*/}
 									<Button
 										color="inherit"
@@ -212,23 +236,34 @@ const CustomHeader = () => {
 							<Grid item>
 								{!loginStatus && (
 									<>
-										<Button color="inherit" onClick={handleLoginClick}>
+										<Button
+											color="inherit"
+											onClick={handleLoginClick}
+										>
 											Login
 										</Button>
-										<Button color="inherit" onClick={handleRegisterClick}>
+										<Button
+											color="inherit"
+											onClick={handleRegisterClick}
+										>
 											Register
 										</Button>
 									</>
 								)}
 								{loginStatus && (
 									<Box display="flex" alignItems="center">
-										<Avatar
-											alt="avatar"
-											src={userData?.avatarUrl}
-											sx={{ marginRight: "1vw" }}
-										/>
+										<div onClick={handleUserAvatarClick}>
+											<Avatar
+												alt="avatar"
+												src={userData?.avatarUrl}
+												sx={{ marginRight: "1vw" }}
+											/>
+										</div>
 										<div>{userData?.username}</div>
-										<Button color="inherit" onClick={handleLogoutClick}>
+										<Button
+											color="inherit"
+											onClick={handleLogoutClick}
+										>
 											Logout
 										</Button>
 									</Box>
@@ -251,9 +286,10 @@ const CustomHeader = () => {
 				<DialogTitle>Login to Study Hive!</DialogTitle>
 				<DialogContent>
 					<DialogContentText>
-						Please input your <b>Huili email </b>address and password to login.
-						We promise that we won't share your email with anyone else and the
-						password will be one-way encrypted.
+						Please input your <b>Huili email </b>address and
+						password to login. We promise that we won't share your
+						email with anyone else and the password will be one-way
+						encrypted.
 					</DialogContentText>
 					<TextField
 						autoFocus
@@ -297,9 +333,10 @@ const CustomHeader = () => {
 
 				<DialogContent>
 					<DialogContentText>
-						Please input your <b>Huili email </b>address and password to
-						register. We promise that we won't share your email with anyone else
-						and the password will be one-way encrypted.
+						Please input your <b>Huili email </b>address and
+						password to register. We promise that we won't share
+						your email with anyone else and the password will be
+						one-way encrypted.
 					</DialogContentText>
 
 					<TextField
@@ -349,8 +386,9 @@ const CustomHeader = () => {
 				<DialogTitle>Register an account in Study Hive!</DialogTitle>
 				<DialogContent>
 					<DialogContentText>
-						We've sent an email to your email address. Please input the
-						verification code in <b>5 minutes</b> to finish the registration.
+						We've sent an email to your email address. Please input
+						the verification code in <b>5 minutes</b> to finish the
+						registration.
 					</DialogContentText>
 					<label>
 						<Button
@@ -358,7 +396,7 @@ const CustomHeader = () => {
 							role={undefined}
 							variant="contained"
 							tabIndex={-1}
-							startIcon={<CloudUpload/>}
+							startIcon={<CloudUpload />}
 						>
 							Upload your avatar
 						</Button>

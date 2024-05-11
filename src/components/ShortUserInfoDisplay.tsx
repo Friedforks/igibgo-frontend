@@ -1,4 +1,4 @@
-import { Avatar, Stack, Typography } from "@mui/material";
+import { Avatar, Grid, Stack, Typography } from "@mui/material";
 import { AxiosResponse } from "axios";
 import { useEffect, useState } from "react";
 import APIResponse from "../entity/APIResponse";
@@ -13,10 +13,12 @@ import {
 type ShortUserInfoDisplayProps = {
 	userId: number | undefined;
 	dataUpdateRequired: boolean;
+	avatarSize?: number;
 };
 export const ShortUserInfoDisplay: React.FC<ShortUserInfoDisplayProps> = ({
 	userId,
 	dataUpdateRequired,
+	avatarSize,
 }) => {
 	const [user, setUser] = useState<FUser>();
 	const [totalView, setTotalView] = useState<number>(0);
@@ -27,6 +29,7 @@ export const ShortUserInfoDisplay: React.FC<ShortUserInfoDisplayProps> = ({
 			.get("/fuser/userId", {
 				params: {
 					userId: userId,
+					token: localStorage.getItem("token"),
 				},
 			})
 			.then((response: AxiosResponse<APIResponse<FUser>>) => {
@@ -63,10 +66,18 @@ export const ShortUserInfoDisplay: React.FC<ShortUserInfoDisplayProps> = ({
 	}, [dataUpdateRequired, userId]);
 	return (
 		<Stack direction="row" spacing={2}>
-			<Avatar alt="Author avatar" src={user?.avatarUrl} />
-			<div>
+			{avatarSize ? (
+				<Avatar
+					alt="Author avatar"
+					src={user?.avatarUrl}
+					style={{ width: avatarSize, height: avatarSize }}
+				/>
+			) : (
+				<Avatar alt="Author avatar" src={user?.avatarUrl} />
+			)}
+			<Stack direction="column" justifyContent="space-evenly">
 				<Typography variant="h6">{user?.username}</Typography>
-				<Stack direction="row" spacing={2}>
+				<Stack direction="row" spacing={2} alignItems="flex-end">
 					<div>
 						<Stack direction="row" spacing={0.5}>
 							<ThumbUpOutlined fontSize="small" />
@@ -86,7 +97,7 @@ export const ShortUserInfoDisplay: React.FC<ShortUserInfoDisplayProps> = ({
 						</Stack>
 					</div>
 				</Stack>
-			</div>
+			</Stack>
 		</Stack>
 	);
 };
