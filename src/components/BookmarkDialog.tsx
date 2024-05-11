@@ -5,6 +5,10 @@ import {
 	DialogActions,
 	DialogContent,
 	DialogTitle,
+	FormControlLabel,
+	FormGroup,
+	InputAdornment,
+	InputLabel,
 	TextField,
 } from "@mui/material";
 import { useEffect, useState } from "react";
@@ -16,6 +20,7 @@ import { NoteBookmark } from "../entity/NoteBookmark";
 import swal from "sweetalert";
 import ResponseCodes from "../entity/ResponseCodes";
 import { AddOutlined } from "@mui/icons-material";
+
 
 type BookmarkDialogProps = {
 	open: boolean;
@@ -33,7 +38,7 @@ export const BookmarkDialog = ({
 	dataUpdateRequired,
 	setDataUpdateRequired,
 }: BookmarkDialogProps) => {
-	const [folderName, setFolderName] = useState<string>("");
+	const [bookmarked, setBookmarked] = useState<NoteBookmark[]>([]);
 	const [availableBookmarks, setAvailableBookmarks] = useState<
 		NoteBookmark[]
 	>([]);
@@ -46,7 +51,29 @@ export const BookmarkDialog = ({
 		getUserBookmarks(); // the user's bookmarks already available
 		getBookmarked(); // the user's already saved bookmarks for this note
 	}, []);
-	const getUserFolders = () => {
+	useEffect(() => {
+		setCheckedStatus(
+			availableBookmarks.map((bookmark) =>
+				bookmarked.some(
+					(bm) => bm.bookmarkNoteId === bookmark.bookmarkNoteId
+				)
+			)
+		);
+	}, [bookmarked, availableBookmarks]);
+
+	const getBookmarked = () => {
+		axiosInstance
+			.get("/note/get/bookmarks/note", {
+				params: {
+					noteId: currentNoteId,
+					userId: userId,
+				},
+			})
+			.then((response: AxiosResponse<APIResponse<NoteBookmark[]>>) => {
+				setBookmarked(response.data.data);
+			});
+	};
+	const getUserBookmarks = () => {
 		axiosInstance
 			.get("/note/get/bookmarks/user", {
 				params: {
@@ -128,20 +155,40 @@ export const BookmarkDialog = ({
 			>
 				<DialogTitle>Bookmark this note</DialogTitle>
 				<DialogContent>
-					<Autocomplete
-						value={folderName}
-						fullWidth
-						options={availableBookmarks.map(
-							(bookmark) => bookmark.folder
-						)}
-						renderInput={(params) => (
-							<TextField
-								name="folder"
-								{...params}
-								label="folder"
+					<FormGroup>
+						{availableBookmarks.map((bookmark, index) => (
+							<FormControlLabel
+								control={
+									<Checkbox
+										checked={checkedStatus[index]}
+										onChange={() =>
+											handleCheckboxChange(index)
+										}
+									/>
+								}
+								key={bookmark.bookmarkNoteId}
+								label={bookmark.folder}
 							/>
-						)}
-					/>
+						))}
+					</FormGroup>
+					<label>
+						<InputLabel id="demo-multiple-chip-label">
+							Others folders: (new folder will be created,
+							separate by comma ',')
+						</InputLabel>
+						<TextField
+							fullWidth
+							variant="standard"
+							name="extraFolder"
+							InputProps={{
+								startAdornment: (
+									<InputAdornment position="start">
+										<AddOutlined />
+									</InputAdornment>
+								),
+							}}
+						/>
+					</label>
 				</DialogContent>
 				<DialogActions>
 					<Button
