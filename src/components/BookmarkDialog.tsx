@@ -1,10 +1,13 @@
 import {
 	Autocomplete,
 	Button,
+	Checkbox,
 	Dialog,
 	DialogActions,
 	DialogContent,
 	DialogTitle,
+	FormControlLabel,
+	FormGroup,
 	TextField,
 } from "@mui/material";
 import { useEffect, useState } from "react";
@@ -31,6 +34,7 @@ export const BookmarkDialog = ({
 	setDataUpdateRequired,
 }: BookmarkDialogProps) => {
 	const [folderName, setFolderName] = useState<string>("");
+	const [bookmarked, setBookmarked] = useState<NoteBookmark[]>([]);
 	const [availableBookmarks, setAvailableBookmarks] = useState<
 		NoteBookmark[]
 	>([]);
@@ -39,11 +43,24 @@ export const BookmarkDialog = ({
 	) as FUser;
 	const userId = userInfo.userId;
 	useEffect(() => {
-		getUserFolders();
+		getUserBookmarks(); // the user's bookmarks already available
+		getBookmarked(); // the user's already saved bookmarks for this note
 	}, []);
-	const getUserFolders = () => {
+	const getBookmarked = () => {
 		axiosInstance
-			.get("/note/get/bookmarks", {
+			.get("/note/get/bookmarks/note", {
+				params: {
+					noteId: currentNoteId,
+					userId: userId,
+				},
+			})
+			.then((response: AxiosResponse<APIResponse<NoteBookmark[]>>) => {
+				setBookmarked(response.data.data);
+			});
+	};
+	const getUserBookmarks = () => {
+		axiosInstance
+			.get("/note/get/bookmarks/user", {
 				params: {
 					userId: userId,
 				},
@@ -70,7 +87,7 @@ export const BookmarkDialog = ({
 				},
 			})
 			.then((response: AxiosResponse<APIResponse<boolean>>) => {
-				if (response.data.code==ResponseCodes.SUCCESS) {
+				if (response.data.code == ResponseCodes.SUCCESS) {
 					swal("Success", "Note added to bookmark", "success");
 					setOpen(false); // close the dialog
 					setStarred(true);
@@ -79,7 +96,8 @@ export const BookmarkDialog = ({
 					// don't close the dialog
 					swal(
 						"Error",
-						"Error in bookmarking this note: " + response.data.message,
+						"Error in bookmarking this note: " +
+							response.data.message,
 						"error"
 					);
 				}
@@ -107,6 +125,21 @@ export const BookmarkDialog = ({
 			>
 				<DialogTitle>Add this note to bookmark</DialogTitle>
 				<DialogContent>
+					<FormGroup>
+						{availableBookmarks.map((bookmark) => (
+							<FormControlLabel
+								control={<Checkbox />}
+								key={bookmark.bookmarkNoteId}
+								label={bookmark.folder}
+								// defaultChecked={bookmarked.some(
+								// 	(bm) =>
+								// 		bm.bookmarkNoteId ===
+								// 		bookmark.bookmarkNoteId
+								// )}
+								defaultChecked
+							/>
+						))}
+					</FormGroup>
 					<Autocomplete
 						value={folderName}
 						fullWidth
@@ -123,7 +156,6 @@ export const BookmarkDialog = ({
 					/>
 				</DialogContent>
 			</Dialog>
-			;
 		</>
 	);
 };

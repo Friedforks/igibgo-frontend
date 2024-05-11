@@ -37,15 +37,11 @@ export class Note {
     title: string;
     replies: NoteReply[];
     tags: NoteTag[];
+    likeCount:number;
+    viewCount:number;
+    saveCount:number;
 
-    constructor(noteId: string,
-        author: FUser,
-        collection: Collection,
-        noteUrl: string,
-        uploadDate: string,
-        title: string,
-        replies: NoteReply[],
-        tags: NoteTag[]) {
+    constructor(noteId: string, author: FUser, collection: Collection, noteUrl: string, uploadDate: string, title: string, replies: NoteReply[], tags: NoteTag[], likeCount:number, viewCount:number, saveCount:number) {
         this.noteId = noteId;
         this.author = author;
         this.collection = collection;
@@ -54,5 +50,8 @@ export class Note {
         this.title = title;
         this.replies = replies;
         this.tags = tags;
+        this.likeCount = likeCount;
+        this.viewCount = viewCount;
+        this.saveCount = saveCount;
     }
 }
