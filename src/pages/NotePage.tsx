@@ -195,7 +195,7 @@ export const NotePage = () => {
 									label="Chip"
 								/>
 							}
-							renderValue={(selected) => (
+							renderValue={(selected:string[]) => (
 								<Box
 									sx={{
 										display: "flex",
@@ -203,7 +203,7 @@ export const NotePage = () => {
 										gap: 0.5,
 									}}
 								>
-									{selected.map((value) => (
+									{selected.map((value:string) => (
 										<Chip key={value} label={value} />
 									))}
 								</Box>

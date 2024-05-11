@@ -487,7 +487,7 @@ export const NoteOpenPage = () => {
 			<BookmarkDialog
 				open={bookmarkDialogOpen}
 				setOpen={setBookmarkDialogOpen}
-				currentNoteId={currentNoteId}
+				currentNoteId={currentNoteId || ""}
 				setStarred={setStarred}
 				dataUpdateRequired={dataUpdateRequired}
 				setDataUpdateRequired={setDataUpdateRequired}
