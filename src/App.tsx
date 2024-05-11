@@ -3,6 +3,7 @@ import { HomePage } from "./pages/HomePage.tsx";
 import { NotePage } from "./pages/NotePage.tsx";
 import { TestPage } from "./pages/TestPage.tsx";
 import { NoteOpenPage } from "./pages/NoteOpenPage.tsx";
+import { UserPage } from "./pages/UserPage.tsx";
 
 function App() {
 	const router = createBrowserRouter([
@@ -19,9 +20,13 @@ function App() {
 			element: <TestPage />,
 		},
 		{
-			path: "/note/open",
+			path: "/note/open/:noteId",
 			element: <NoteOpenPage />,
 		},
+		{
+			path: "/user/:userId",
+			element: <UserPage />,
+		}
 	]);
 	return (
 		<>

@@ -82,7 +82,6 @@ const CustomHeader = () => {
 		const formData = new FormData(event.currentTarget);
 		const email = formData.get("email") as string;
 		const password = formData.get("password") as string;
-		console.log("formdata: " + formData);
 		axiosInstance
 			.post("/fuser/register1", 0, {
 				params: {

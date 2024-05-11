@@ -1,13 +1,33 @@
-import { Grid, Skeleton, Stack, Typography } from "@mui/material";
+import {
+	Avatar,
+	Chip,
+	Divider,
+	Fade,
+	Grid,
+	IconButton,
+	InputAdornment,
+	List,
+	ListItem,
+	ListItemAvatar,
+	ListItemText,
+	Skeleton,
+	Stack,
+	TextField,
+	Typography,
+} from "@mui/material";
 import CustomHeader from "../components/CustomHeader";
 import {
+	Comment,
+	CommentOutlined,
+	Delete,
+	Send,
 	Star,
 	StarBorderOutlined,
 	ThumbUp,
 	ThumbUpOutlined,
 	VisibilityOutlined,
 } from "@mui/icons-material";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import axiosInstance from "../utils/AxiosInstance";
 import APIResponse from "../entity/APIResponse";
 import { Note } from "../entity/Note";
@@ -16,6 +36,9 @@ import { FUser } from "../entity/FUser";
 import swal from "sweetalert";
 import { AxiosResponse } from "axios";
 import { BookmarkDialog } from "../components/BookmarkDialog";
+import ResponseCodes from "../entity/ResponseCodes";
+import { NoteReply } from "../entity/NoteReply";
+import { useParams } from "react-router-dom";
 
 export const NoteOpenPage = () => {
 	const [currentNote, setCurrentNote] = useState<Note>();
@@ -24,11 +47,17 @@ export const NoteOpenPage = () => {
 	const [totalLike, setTotalLike] = useState<number>(0);
 	const [totalSave, setTotalSave] = useState<number>(0);
 	const [totalView, setTotalView] = useState<number>(0);
+	const [totalReply, setTotalReply] = useState<number>(0);
 	const [isLiked, setLiked] = useState(false);
 	const [isStarred, setStarred] = useState(false);
+	const [isReplied, setReplied] = useState(false);
 	const [dataUpdateRequired, setDataUpdateRequired] = useState(false);
 	const [bookmarkDialogOpen, setBookmarkDialogOpen] = useState(false);
-	const currentNoteId = "56f782e9-0887-4688-9b32-64bde9d76124";
+	const [replyClicked, setReplyClicked] = useState(false);
+	const [replies, setReplies] = useState<NoteReply[]>([]);
+
+	const params=useParams();
+	const currentNoteId = params.noteId;
 	const userInfo = JSON.parse(
 		localStorage.getItem("userInfo") as string
 	) as FUser;
@@ -56,7 +85,23 @@ export const NoteOpenPage = () => {
 		// query for user note status
 		getLikeStatus();
 		getSaveStatus();
+		getReplyStatus();
 	}, []);
+
+	useEffect(() => {
+		if (currentNote === undefined) return;
+		getTotalLike();
+		getTotalSave();
+		getTotalView();
+		getTotalReply();
+		getReplies();
+		getLikeStatus();
+		getSaveStatus();
+		getReplyStatus();
+	}, [currentNote, dataUpdateRequired]);
+	window.onresize = () => {
+		setHeight(window.innerHeight);
+	};
 
 	const getLikeStatus = () => {
 		// query for starred or liked status
@@ -69,7 +114,6 @@ export const NoteOpenPage = () => {
 			})
 			.then((response) => {
 				setLiked(response.data.data);
-				console.log("saved", response.data.data);
 			});
 	};
 	const getSaveStatus = () => {
@@ -82,7 +126,18 @@ export const NoteOpenPage = () => {
 			})
 			.then((response) => {
 				setStarred(response.data.data);
-				console.log("liked", response.data.data);
+			});
+	};
+	const getReplyStatus = () => {
+		axiosInstance
+			.get("/note/is/replied", {
+				params: {
+					noteId: currentNoteId,
+					userId: userId,
+				},
+			})
+			.then((response: AxiosResponse<APIResponse<boolean>>) => {
+				setReplied(response.data.data);
 			});
 	};
 
@@ -119,16 +174,35 @@ export const NoteOpenPage = () => {
 				setTotalView(response.data.data);
 			});
 	};
-	useEffect(() => {
-		if (currentNote === undefined) return;
-		getTotalLike();
-		getTotalSave();
-		getTotalView();
-	}, [currentNote]);
-	window.onresize = () => {
-		setHeight(window.innerHeight);
+	const getTotalReply = () => {
+		axiosInstance
+			.get("/note/total/reply", {
+				params: {
+					noteId: currentNoteId,
+				},
+			})
+			.then((response: AxiosResponse<APIResponse<number>>) => {
+				setTotalReply(response.data.data);
+			});
 	};
-
+	const getReplies = () => {
+		axiosInstance
+			.get("/note/get/reply", {
+				params: {
+					noteId: currentNoteId,
+				},
+			})
+			.then((response: AxiosResponse<APIResponse<NoteReply[]>>) => {
+				if (response.data.code == ResponseCodes.SUCCESS) {
+					setReplies(response.data.data);
+				} else {
+					console.log(
+						"Error in fetching replies: ",
+						response.data.message
+					);
+				}
+			});
+	};
 	const likeNote = () => {
 		setLiked(true);
 		axiosInstance
@@ -148,7 +222,6 @@ export const NoteOpenPage = () => {
 	};
 
 	const unlikeNote = () => {
-		console.log("clicked unlike");
 		setLiked(false);
 		axiosInstance
 			.get("/note/unlike", {
@@ -164,8 +237,55 @@ export const NoteOpenPage = () => {
 	};
 
 	const saveNote = () => {
-		console.log("clicked save");
 		setBookmarkDialogOpen(true);
+	};
+
+	const replySubmit = (e: React.FormEvent<HTMLFormElement>) => {
+		e.preventDefault();
+		const formData = new FormData(e.currentTarget);
+		const replyContent = formData.get("replyContent") as string;
+		// check if reply text is empty
+		if (replyContent === "") {
+			swal("Error", "Reply text cannot be empty", "error");
+			return;
+		}
+		axiosInstance
+			.get("/note/reply", {
+				params: {
+					noteId: currentNoteId,
+					authorId: userId,
+					replyContent: replyContent,
+				},
+			})
+			.then(() => {
+				setReplyClicked(false);
+				getTotalReply();
+				setDataUpdateRequired(!dataUpdateRequired);
+			})
+			.catch((error) => {
+				swal("Error", error.response.data.message, "error");
+			});
+	};
+	const deleteReply = (replyId: number) => {
+		const token = localStorage.getItem("token");
+		if (token == null) {
+			swal("Error", "Please login to delete reply", "error");
+		} else {
+			axiosInstance
+				.get("/note/delete/reply", {
+					params: {
+						replyId: replyId,
+						token: localStorage.getItem("token"),
+					},
+				})
+				.then(() => {
+					getTotalReply();
+					setDataUpdateRequired(!dataUpdateRequired);
+				})
+				.catch((error) => {
+					swal("Error", error.response.data.message, "error");
+				});
+		}
 	};
 
 	if (loading) {
@@ -178,11 +298,6 @@ export const NoteOpenPage = () => {
 		);
 	}
 
-	const centered = {
-		display: "flex",
-		justifyContent: "center",
-		alignItems: "center",
-	};
 	return (
 		<>
 			<CustomHeader />
@@ -195,6 +310,7 @@ export const NoteOpenPage = () => {
 				}}
 			>
 				<Grid item xs={8}>
+					{/* Title section */}
 					<Typography variant="h6">{currentNote?.title}</Typography>
 					<div style={{ marginTop: "5px" }}>
 						<Stack direction="row" spacing={2}>
@@ -234,13 +350,11 @@ export const NoteOpenPage = () => {
 					/>
 					<Stack
 						direction="row"
-						justifyContent="space-around"
-						spacing={10}
-						style={centered}
+						justifyContent="space-evenly"
 						marginTop={2}
 					>
 						<div>
-							<Stack spacing={0.5} alignItems="center">
+							<Stack spacing={0.2} alignItems="center">
 								<div>
 									{isLiked ? (
 										<div onClick={unlikeNote}>
@@ -271,7 +385,103 @@ export const NoteOpenPage = () => {
 								<span>{totalSave}</span>
 							</Stack>
 						</div>
+						<div>
+							<Stack spacing={0.5} alignItems="center">
+								<div
+									onClick={() => {
+										setReplyClicked(!replyClicked);
+									}}
+								>
+									{isReplied ? (
+										<div>
+											<Comment fontSize="large" />
+										</div>
+									) : (
+										<div>
+											<CommentOutlined fontSize="large" />
+										</div>
+									)}
+								</div>
+								<span>{totalReply}</span>
+							</Stack>
+						</div>
 					</Stack>
+					<Divider textAlign="left" style={{ marginTop: "20px" }}>
+						<Chip label="Comments" size="small" />
+					</Divider>
+					{/* new reply */}
+					<form onSubmit={replySubmit}>
+						{replyClicked && (
+							<Fade in={replyClicked}>
+								<TextField
+									label="New comment"
+									style={{
+										marginTop: "10px",
+										width: "90%",
+										marginLeft: "3%",
+									}}
+									name="replyContent"
+									InputProps={{
+										endAdornment: (
+											<InputAdornment position="end">
+												<IconButton type="submit">
+													<Send />
+												</IconButton>
+											</InputAdornment>
+										),
+									}}
+								></TextField>
+							</Fade>
+						)}
+					</form>
+					{/* Replies */}
+					<List>
+						{replies.map((reply: NoteReply) => (
+							<ListItem
+								alignItems="flex-start"
+								key={reply.noteReplyId}
+								secondaryAction={
+									reply.author.userId === userId && (
+										<IconButton
+											onClick={() =>
+												deleteReply(reply.noteReplyId)
+											}
+										>
+											<Delete />
+										</IconButton>
+									)
+								}
+							>
+								<ListItemAvatar>
+									<Avatar
+										src={reply.author.avatarUrl}
+										alt={reply.author.username}
+									/>
+								</ListItemAvatar>
+								<ListItemText
+									primary={reply.author.username}
+									secondary={
+										<React.Fragment>
+											<Typography
+												sx={{ display: "inline" }}
+												component="span"
+												variant="body2"
+												color="text.primary"
+											>
+												<span
+													style={{
+														wordWrap: "break-word",
+													}}
+												>
+													{reply.replyContent}
+												</span>
+											</Typography>
+										</React.Fragment>
+									}
+								></ListItemText>
+							</ListItem>
+						))}
+					</List>
 				</Grid>
 			</Grid>
 			<BookmarkDialog
@@ -279,6 +489,7 @@ export const NoteOpenPage = () => {
 				setOpen={setBookmarkDialogOpen}
 				currentNoteId={currentNoteId}
 				setStarred={setStarred}
+				dataUpdateRequired={dataUpdateRequired}
 				setDataUpdateRequired={setDataUpdateRequired}
 			/>
 		</>

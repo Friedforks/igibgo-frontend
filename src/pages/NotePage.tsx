@@ -46,14 +46,14 @@ import { useNavigate } from "react-router-dom";
 
 export const NotePage = () => {
 	const [noteList, setNoteList] = useState<Note[]>([]);
-	const pageSize: number = 1; // fixed page size for pagination
+	const pageSize: number = 10; // fixed page size for pagination
 	const [page, setPage] = useState<number>(0);
 	const [sortBy, setSortBy] = useState<string>("uploadDate");
 	const [ascending, setAscending] = useState<boolean>(false);
 	const [showDialog, setShowDialog] = useState<boolean>(false);
 	const [totalPages, setTotalPages] = useState<number>(0);
 	const [selectedTags, setSelectedTags] = useState<string[]>([]);
-	const [avaliableTags, setAvaliableTags] = useState<string[]>([]);
+	const [availableTags, setAvailableTags] = useState<string[]>([]);
 	const [searchBarValue, setSearchBarValue] = useState<string>("");
 	const navigate = useNavigate();
 	useEffect(() => {
@@ -116,7 +116,7 @@ export const NotePage = () => {
 					}
 				});
 		}
-	}, [sortBy, page, ascending, avaliableTags, searchBarValue, selectedTags]);
+	}, [sortBy, page, ascending, availableTags, searchBarValue, selectedTags]);
 
 	useEffect(() => {
 		// fetch tags
@@ -124,7 +124,7 @@ export const NotePage = () => {
 			.get("/note/get/allTags")
 			.then((response: AxiosResponse<APIResponse<string[]>>) => {
 				if (response.data.code == ResponseCodes.SUCCESS) {
-					setAvaliableTags(response.data.data);
+					setAvailableTags(response.data.data);
 				} else {
 					swal("Error", response.data.message, "error");
 				}
@@ -142,6 +142,9 @@ export const NotePage = () => {
 		} = event;
 		setSelectedTags(typeof value === "string" ? value.split(",") : value);
 	};
+	const handleNoteListItemClick=(noteId:string)=>{
+		navigate('/note/open/'+noteId);
+	}
 
 	return (
 		<>
@@ -206,7 +209,7 @@ export const NotePage = () => {
 								</Box>
 							)}
 						>
-							{avaliableTags.map((name, id) => (
+							{availableTags.map((name, id) => (
 								<MenuItem key={id} value={name}>
 									{name}
 								</MenuItem>
@@ -336,7 +339,7 @@ export const NotePage = () => {
 								alignItems="flex-start"
 								disablePadding
 							>
-								<ListItemButton>
+								<ListItemButton onClick={()=>handleNoteListItemClick(value.noteId)}>
 									<ListItemAvatar>
 										<Avatar
 											alt="user avatar"

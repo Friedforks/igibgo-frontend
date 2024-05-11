@@ -1,28 +1,3 @@
-/** java
- *     @Id
- *     @GeneratedValue(strategy = GenerationType.IDENTITY)
- *     public String noteId;
- *     @ManyToOne(fetch = FetchType.EAGER)
- *     @JoinColumn(name = "author")
- *     public FUser author;
- *     public Long likeCount = 0L;
- *     public Long saveCount = 0L;
- *     public Long viewCount = 0L;
- *
- *     @ManyToOne(fetch = FetchType.EAGER)
- *     @JoinColumn(name = "collection_id")
- *     public Collection collection;// fk
- *
- *     public String noteUrl;
- *     public LocalDateTime uploadDate = LocalDateTime.now(ZoneId.of("Asia/Shanghai"));
- *     public String title;
- *
- *     @OneToMany(mappedBy = "note", cascade = CascadeType.ALL, orphanRemoval = true)
- *     public List<NoteReply> replies = new ArrayList<>();
- *
- *     @OneToMany(mappedBy = "note", cascade = CascadeType.ALL, orphanRemoval = true)
- *     public List<NoteTag> tags = new ArrayList<>();
- */
 import { FUser } from "./FUser.ts";
 import { Collection } from "./Collection.ts";
 import { NoteReply } from "./NoteReply.ts";
@@ -37,15 +12,12 @@ export class Note {
     title: string;
     replies: NoteReply[];
     tags: NoteTag[];
+    likeCount: number;
+    viewCount: number;
+    saveCount: number;
+    replyCount: number;
 
-    constructor(noteId: string,
-        author: FUser,
-        collection: Collection,
-        noteUrl: string,
-        uploadDate: string,
-        title: string,
-        replies: NoteReply[],
-        tags: NoteTag[]) {
+    constructor(noteId: string, author: FUser, collection: Collection, noteUrl: string, uploadDate: string, title: string, replies: NoteReply[], tags: NoteTag[], likeCount: number, viewCount: number, saveCount: number, replyCount: number) {
         this.noteId = noteId;
         this.author = author;
         this.collection = collection;
@@ -54,5 +26,9 @@ export class Note {
         this.title = title;
         this.replies = replies;
         this.tags = tags;
+        this.likeCount = likeCount;
+        this.viewCount = viewCount;
+        this.saveCount = saveCount;
+        this.replyCount = replyCount
     }
 }

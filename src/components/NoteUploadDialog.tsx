@@ -176,7 +176,7 @@ export const NoteUploadDialog: React.FC<NoteUploadDialogProps> = ({
 				<DialogTitle>Upload your own note!</DialogTitle>
 				<DialogContent>
 					<DialogContentText>
-						Study hive is a platform for sharing knowledges.
+						Study hive is a platform for sharing knowledge.
 						<b>Every user </b>can share their notes with others.
 						Please upload your note <b>in .pdf format</b> here.
 					</DialogContentText>

@@ -23,7 +23,6 @@ export const ShortUserInfoDisplay: React.FC<ShortUserInfoDisplayProps> = ({
 	const [totalLike, setTotalLike] = useState<number>(0);
 	const [totalSave, setTotalSave] = useState<number>(0);
 	useEffect(() => {
-		console.log("short user info display data updated with flag", dataUpdateRequired);
 		axiosInstance
 			.get("/fuser/userId", {
 				params: {
