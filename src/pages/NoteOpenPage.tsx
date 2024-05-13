@@ -38,7 +38,7 @@ import { AxiosResponse } from "axios";
 import { BookmarkDialog } from "../components/BookmarkDialog";
 import ResponseCodes from "../entity/ResponseCodes";
 import { NoteReply } from "../entity/NoteReply";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 export const NoteOpenPage = () => {
 	const [currentNote, setCurrentNote] = useState<Note>();
@@ -102,6 +102,7 @@ export const NoteOpenPage = () => {
 	window.onresize = () => {
 		setHeight(window.innerHeight);
 	};
+	const navigate=useNavigate();
 
 	const getLikeStatus = () => {
 		// query for starred or liked status
@@ -452,7 +453,7 @@ export const NoteOpenPage = () => {
 									)
 								}
 							>
-								<ListItemAvatar>
+								<ListItemAvatar onClick={()=>{navigate('/user/'+reply.author.userId)}}>
 									<Avatar
 										src={reply.author.avatarUrl}
 										alt={reply.author.username}

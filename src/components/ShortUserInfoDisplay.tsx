@@ -9,6 +9,7 @@ import {
 	VisibilityOutlined,
 	StarBorderOutlined,
 } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
 
 type ShortUserInfoDisplayProps = {
 	userId: number | undefined;
@@ -64,17 +65,20 @@ export const ShortUserInfoDisplay: React.FC<ShortUserInfoDisplayProps> = ({
 				setTotalView(response.data.data);
 			});
 	}, [dataUpdateRequired, userId]);
+	const navigate=	useNavigate();
 	return (
 		<Stack direction="row" spacing={2}>
-			{avatarSize ? (
-				<Avatar
-					alt="Author avatar"
-					src={user?.avatarUrl}
-					style={{ width: avatarSize, height: avatarSize }}
-				/>
-			) : (
-				<Avatar alt="Author avatar" src={user?.avatarUrl} />
-			)}
+			<div onClick={()=>{navigate('/user/'+userId)}}>
+				{avatarSize ? (
+					<Avatar
+						alt="Author avatar"
+						src={user?.avatarUrl}
+						style={{ width: avatarSize, height: avatarSize }}
+					/>
+				) : (
+					<Avatar alt="Author avatar" src={user?.avatarUrl} />
+				)}
+			</div>
 			<Stack direction="column" justifyContent="space-evenly">
 				<Typography variant="h6">{user?.username}</Typography>
 				<Stack direction="row" spacing={2} alignItems="flex-end">
