@@ -30,8 +30,6 @@ export const NoteUploadDialog: React.FC<NoteUploadDialogProps> = ({
 	open,
 	setOpen,
 }) => {
-	const [availableTags, setAvailableTags] = useState<string[]>([]);
-	const [tagFieldValue, setTagFieldValue] = useState<string[]>([]);
 	const [collectionValue, setCollectionValue] = useState<string>("");
 	const [availableCollections, setAvailableCollections] = useState<
 		Collection[]
@@ -66,22 +64,8 @@ export const NoteUploadDialog: React.FC<NoteUploadDialogProps> = ({
 		}
 	};
 
-	const getTags = () => {
-		// fetch tags
-		axiosInstance
-			.get("/note/get/allTags")
-			.then((response: AxiosResponse<APIResponse<string[]>>) => {
-				if (response.data.code == ResponseCodes.SUCCESS) {
-					setAvailableTags(response.data.data);
-				} else {
-					swal("Error", response.data.message, "error");
-				}
-			});
-	};
-
 	useEffect(() => {
 		getCollections();
-		getTags();
 	}, []);
 
 	const addCollectionSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -143,15 +127,15 @@ export const NoteUploadDialog: React.FC<NoteUploadDialogProps> = ({
 		data.append("collectionId", collectionId);
 		data.append("title", title);
 		data.append("tags", tags);
-		if(title == null || title == ""){
+		if (title == null || title == "") {
 			swal("Error", "Please enter title", "error");
 			return;
 		}
-		if(tags == null || tags == ""){
+		if (tags == null || tags == "") {
 			swal("Error", "Please enter tags", "error");
 			return;
 		}
-		if(collectionId == null || collectionId == ""){
+		if (collectionId == null || collectionId == "") {
 			swal("Error", "Please select a collection", "error");
 			return;
 		}
@@ -213,7 +197,10 @@ export const NoteUploadDialog: React.FC<NoteUploadDialogProps> = ({
 							style={{ display: "none" }}
 							onChange={handleFileChange}
 						/>
-						<Typography variant="caption" style={{marginLeft:"5px"}}>
+						<Typography
+							variant="caption"
+							style={{ marginLeft: "5px" }}
+						>
 							{file && file.name}
 						</Typography>
 					</label>

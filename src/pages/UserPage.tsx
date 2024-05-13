@@ -61,7 +61,7 @@ export const UserPage = () => {
 			});
 	};
 
-	const handleChange = (event: React.SyntheticEvent, newTabPage: string) => {
+	const handleChange = (_event: React.SyntheticEvent, newTabPage: string) => {
 		setTabPage(newTabPage);
 	};
 

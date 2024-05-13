@@ -1,4 +1,4 @@
-import { Avatar, Grid, Stack, Typography } from "@mui/material";
+import { Avatar, Stack, Typography } from "@mui/material";
 import { AxiosResponse } from "axios";
 import { useEffect, useState } from "react";
 import APIResponse from "../entity/APIResponse";

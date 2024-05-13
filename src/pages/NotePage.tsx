@@ -136,15 +136,15 @@ export const NotePage = () => {
 		setSearchBarValue(event.target.value);
 	};
 
-	const handleTagSelectChange = (event: SelectChangeEvent) => {
+	const handleTagSelectChange = (event: SelectChangeEvent<string[]>) => {
 		const {
 			target: { value },
 		} = event;
 		setSelectedTags(typeof value === "string" ? value.split(",") : value);
 	};
-	const handleNoteListItemClick=(noteId:string)=>{
-		navigate('/note/open/'+noteId);
-	}
+	const handleNoteListItemClick = (noteId: string) => {
+		navigate("/note/open/" + noteId);
+	};
 
 	return (
 		<>
@@ -188,14 +188,14 @@ export const NotePage = () => {
 							id="demo-multiple-chip"
 							multiple
 							value={selectedTags}
-							onChange={handleTagSelectChange}
+							onChange={(event: SelectChangeEvent<string[]>) => handleTagSelectChange(event)}
 							input={
 								<OutlinedInput
 									id="select-multiple-chip"
 									label="Chip"
 								/>
 							}
-							renderValue={(selected:string[]) => (
+							renderValue={(selected: string[]) => (
 								<Box
 									sx={{
 										display: "flex",
@@ -203,7 +203,7 @@ export const NotePage = () => {
 										gap: 0.5,
 									}}
 								>
-									{selected.map((value:string) => (
+									{selected.map((value: string) => (
 										<Chip key={value} label={value} />
 									))}
 								</Box>
@@ -272,7 +272,7 @@ export const NotePage = () => {
 				<Grid item xs={3}>
 					<Box sx={{ width: "100%" }}>
 						<List>
-							<ListItem disablePadding >
+							<ListItem disablePadding>
 								<ListItemButton>
 									<ListItemIcon>
 										<CalendarMonthTwoToneIcon />
@@ -339,7 +339,11 @@ export const NotePage = () => {
 								alignItems="flex-start"
 								disablePadding
 							>
-								<ListItemButton onClick={()=>handleNoteListItemClick(value.noteId)}>
+								<ListItemButton
+									onClick={() =>
+										handleNoteListItemClick(value.noteId)
+									}
+								>
 									<ListItemAvatar>
 										<Avatar
 											alt="user avatar"
