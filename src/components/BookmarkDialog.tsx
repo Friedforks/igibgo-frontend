@@ -20,7 +20,7 @@ import { NoteBookmark } from "../entity/NoteBookmark";
 import swal from "sweetalert";
 import ResponseCodes from "../entity/ResponseCodes";
 import { AddOutlined } from "@mui/icons-material";
-
+import { Bookmark } from "../entity/Bookmark";
 
 type BookmarkDialogProps = {
 	open: boolean;
@@ -39,9 +39,9 @@ export const BookmarkDialog = ({
 	setDataUpdateRequired,
 }: BookmarkDialogProps) => {
 	const [bookmarked, setBookmarked] = useState<NoteBookmark[]>([]);
-	const [availableBookmarks, setAvailableBookmarks] = useState<
-		NoteBookmark[]
-	>([]);
+	const [availableBookmarks, setAvailableBookmarks] = useState<Bookmark[]>(
+		[]
+	);
 	const [checkedStatus, setCheckedStatus] = useState<boolean[]>([]);
 	const userInfo = JSON.parse(
 		localStorage.getItem("userInfo") as string
@@ -52,18 +52,31 @@ export const BookmarkDialog = ({
 		getBookmarked(); // the user's already saved bookmarks for this note
 	}, []);
 	useEffect(() => {
+		const start = performance.now();
+
+		// O(N^3)
 		setCheckedStatus(
 			availableBookmarks.map((bookmark) =>
-				bookmarked.some(
-					(bm) => bm.bookmarkNoteId === bookmark.bookmarkNoteId
+				bookmark.noteBookmarks.some((noteBookmark) =>
+					bookmarked.some(
+						(bm) =>
+							bm.noteBookmarkId === noteBookmark.noteBookmarkId
+					)
 				)
 			)
+		);
+
+		const end = performance.now();
+		console.log(
+			`Time consuming function setCheckedStatus execution time: ${
+				end - start
+			} ms`
 		);
 	}, [bookmarked, availableBookmarks]);
 
 	const getBookmarked = () => {
 		axiosInstance
-			.get("/note/get/bookmarks/note", {
+			.get("/bookmark/get/note/page", {
 				params: {
 					noteId: currentNoteId,
 					userId: userId,
@@ -75,12 +88,16 @@ export const BookmarkDialog = ({
 	};
 	const getUserBookmarks = () => {
 		axiosInstance
-			.get("/note/get/bookmarks/user", {
+			.get("/bookmark/get/by/userId", {
 				params: {
 					userId: userId,
 				},
 			})
-			.then((response: AxiosResponse<APIResponse<NoteBookmark[]>>) => {
+			.then((response: AxiosResponse<APIResponse<Bookmark[]>>) => {
+				console.log(
+					"BookmarkDialog.tsx getUserBookmarks response.data.data",
+					response.data.data
+				);
 				setAvailableBookmarks(response.data.data);
 			});
 	};
@@ -91,7 +108,7 @@ export const BookmarkDialog = ({
 
 		const selectedFolders: string[] = availableBookmarks
 			.filter((_, index) => checkedStatus[index])
-			.map((bookmark) => bookmark.folder);
+			.map((bookmark) => bookmark.bookmarkName);
 		const newFolders: string[] = extraFolder
 			.split(",")
 			.map((folder) => folder.trim());
@@ -100,7 +117,7 @@ export const BookmarkDialog = ({
 		selectedFolders.push(...newFolders);
 
 		axiosInstance
-			.post("/note/bookmark", 0,{
+			.post("/bookmark/new", 0, {
 				params: {
 					noteId: currentNoteId,
 					userId: userId,
@@ -134,6 +151,7 @@ export const BookmarkDialog = ({
 				);
 			});
 	};
+
 	const handleCheckboxChange = (index: number) => {
 		setCheckedStatus(
 			checkedStatus.map((checked, i) =>
@@ -141,6 +159,7 @@ export const BookmarkDialog = ({
 			)
 		);
 	};
+
 	return (
 		<>
 			<Dialog
@@ -166,8 +185,8 @@ export const BookmarkDialog = ({
 										}
 									/>
 								}
-								key={bookmark.bookmarkNoteId}
-								label={bookmark.folder}
+								key={bookmark.bookmarkId}
+								label={bookmark.bookmarkName}
 							/>
 						))}
 					</FormGroup>

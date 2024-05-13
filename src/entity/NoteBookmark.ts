@@ -1,16 +1,14 @@
-import { FUser } from "./FUser";
+import { Bookmark } from "./Bookmark";
 import { Note } from "./Note";
 
 export class NoteBookmark {
-    bookmarkNoteId: string;
+    noteBookmarkId: string;
+    bookmark: Bookmark;
     note: Note;
-    user: FUser;
-    folder:string;
-
-    constructor(bookmarkId: string, note: Note, user: FUser, folder:string) {
-        this.bookmarkNoteId = bookmarkId;
+    // constructor
+    constructor(noteBookmarkId: string, bookmark: Bookmark, note: Note) {
+        this.noteBookmarkId = noteBookmarkId;
+        this.bookmark = bookmark;
         this.note = note;
-        this.user = user;
-        this.folder = folder;
     }
 }
