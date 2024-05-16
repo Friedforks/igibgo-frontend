@@ -38,7 +38,7 @@ export const UserPage = () => {
 			});
 		getNotes();
 		getCurrentUser();
-	}, []);
+	}, [currentUserId]);
 
 	const getCurrentUser = () => {
 		axiosInstance

@@ -4,34 +4,19 @@ import axiosInstance from "../../utils/AxiosInstance";
 import { AxiosResponse } from "axios";
 import APIResponse from "../../entity/APIResponse";
 import { Bookmark } from "../../entity/Bookmark";
-import {
-	Accordion,
-	AccordionDetails,
-	AccordionSummary,
-	Avatar,
-	Chip,
-	Divider,
-	List,
-	ListItem,
-	ListItemAvatar,
-	ListItemButton,
-	ListItemText,
-	Stack,
-	Typography,
-} from "@mui/material";
-import {
-	ExpandMoreOutlined,
-	RemoveRedEye,
-	ThumbUpAltOutlined,
-} from "@mui/icons-material";
+import { Accordion, AccordionDetails, AccordionSummary } from "@mui/material";
+import { ExpandMoreOutlined } from "@mui/icons-material";
 import { NoteBookmark } from "../../entity/NoteBookmark";
 import { useNavigate } from "react-router-dom";
+import { Note } from "../../entity/Note";
+import { NoteList } from "../Note/NoteList";
 
 type UserBookmarkTabProps = {
 	userId: number;
 };
 export const UserBookmarkTab = ({ userId }: UserBookmarkTabProps) => {
 	const [bookmarks, setBookmarks] = useState<Bookmark[]>([]);
+	const [noteList, setNoteList] = useState<Note[][]>([[]]);
 	useEffect(() => {
 		getBookmarks();
 	}, []);
@@ -45,6 +30,10 @@ export const UserBookmarkTab = ({ userId }: UserBookmarkTabProps) => {
 			})
 			.then((response: AxiosResponse<APIResponse<Bookmark[]>>) => {
 				setBookmarks(response.data.data);
+				const respData = response.data.data;
+				// decompose bookmark list's note field into a list of notes (to be used in the NoteList component)
+				const extractedNotes = respData.map((item) => item.noteBookmarks.map((noteBookmark: NoteBookmark) => noteBookmark.note));
+				setNoteList(extractedNotes);
 			});
 	};
 	const navigate = useNavigate();
@@ -52,8 +41,8 @@ export const UserBookmarkTab = ({ userId }: UserBookmarkTabProps) => {
 		navigate(`/note/open/${noteId}`);
 	};
 	return (
-		<TabPanel value="5" sx={{ padding: 0 }}>
-			{bookmarks.map((bookmark: Bookmark) => (
+		<TabPanel id="5" value="5" sx={{ padding: 0 }}>
+			{bookmarks.map((bookmark: Bookmark, index: number) => (
 				<Accordion>
 					<AccordionSummary
 						expandIcon={<ExpandMoreOutlined />}
@@ -62,104 +51,10 @@ export const UserBookmarkTab = ({ userId }: UserBookmarkTabProps) => {
 						{bookmark.bookmarkName}
 					</AccordionSummary>
 					<AccordionDetails sx={{ padding: 0 }}>
-						<List sx={{ width: "100%" }}>
-							{bookmark.noteBookmarks.map(
-								(noteBookmark: NoteBookmark) => (
-									<ListItem
-										key={noteBookmark.noteBookmarkId}
-										alignItems="flex-start"
-										disablePadding
-									>
-										<ListItemButton
-											onClick={() =>
-												handleNoteListItemClick(
-													noteBookmark.note.noteId
-												)
-											}
-										>
-											<ListItemAvatar>
-												<Avatar
-													alt="user avatar"
-													src={
-														noteBookmark.note.author
-															.avatarUrl
-													}
-												/>
-											</ListItemAvatar>
-											<ListItemText
-												primary={
-													noteBookmark.note.title
-												}
-												secondary={
-													<Stack
-														direction="row"
-														divider={
-															<Divider
-																orientation="vertical"
-																flexItem
-															/>
-														}
-														spacing={1}
-													>
-														<>
-															<RemoveRedEye
-																fontSize="small"
-																sx={{
-																	marginRight:
-																		"3px",
-																}}
-															/>
-															<Typography
-																variant="body2"
-																color="text.secondary"
-																sx={{
-																	marginRight:
-																		"20px",
-																}}
-															>
-																{
-																	noteBookmark
-																		.note
-																		.viewCount
-																}
-															</Typography>
-														</>
-														<>
-															<ThumbUpAltOutlined
-																fontSize="small"
-																sx={{
-																	marginRight:
-																		"3px",
-																}}
-															/>
-															<Typography
-																variant="body2"
-																color="text.secondary"
-															>
-																{
-																	noteBookmark
-																		.note
-																		.likeCount
-																}
-															</Typography>
-														</>
-													</Stack>
-												}
-											/>
-											<Stack direction="row" spacing={1}>
-												{noteBookmark.note.tags.map(
-													(tag) => (
-														<Chip
-															label={tag.tagText}
-														></Chip>
-													)
-												)}
-											</Stack>
-										</ListItemButton>
-									</ListItem>
-								)
-							)}
-						</List>
+						<NoteList
+							noteList={noteList[index]}
+							handleNoteListItemClick={handleNoteListItemClick}
+						/>
 					</AccordionDetails>
 				</Accordion>
 			))}

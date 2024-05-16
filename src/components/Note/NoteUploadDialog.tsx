@@ -13,13 +13,14 @@ import {
 	Typography,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import axiosInstance from "../utils/AxiosInstance";
-import APIResponse from "../entity/APIResponse";
+import axiosInstance from "../../utils/AxiosInstance";
+import APIResponse from "../../entity/APIResponse";
 import swal from "sweetalert";
-import ResponseCodes from "../entity/ResponseCodes";
-import { FUser } from "../entity/FUser";
-import { Collection } from "../entity/Collection";
+import ResponseCodes from "../../entity/ResponseCodes";
+import { FUser } from "../../entity/FUser";
+import { Collection } from "../../entity/Collection";
 import { AxiosResponse } from "axios";
+import { LineProgressBuffer } from "../LineProgressBuffer";
 
 type NoteUploadDialogProps = {
 	open: boolean;
@@ -36,7 +37,9 @@ export const NoteUploadDialog: React.FC<NoteUploadDialogProps> = ({
 	>([]);
 	const [addCollectionDialogOpen, setAddCollectionDialogOpen] =
 		useState(false);
-
+	const [isUploading, setUploading] = useState(false);
+	const [progress, setProgress] = useState(0);
+	const [buffer, setBuffer] = useState(10);
 	const getCollections = () => {
 		// get collections
 		const userInfo = localStorage.getItem("userInfo");
@@ -55,12 +58,6 @@ export const NoteUploadDialog: React.FC<NoteUploadDialogProps> = ({
 						swal("Error", response.data.message, "error");
 					}
 				});
-		} else {
-			swal(
-				"Error",
-				"You didn't successfully login. Please refresh the page",
-				"error"
-			);
 		}
 	};
 
@@ -140,15 +137,30 @@ export const NoteUploadDialog: React.FC<NoteUploadDialogProps> = ({
 			return;
 		}
 		console.log("collectionId" + collectionId);
+		setUploading(true);
 		axiosInstance
-			.post("/note/upload", data)
+			.post("/note/upload", data, {
+				onUploadProgress: (progressEvent) => {
+					const total = progressEvent.total || 1; // Avoid division by zero
+					const currentProgress = Math.round(
+						(progressEvent.loaded * 100) / total
+					);
+					setProgress(currentProgress);
+					setBuffer(currentProgress + Math.round(10 * Math.random()));
+				},
+			})
 			.then((resp: AxiosResponse<APIResponse<null>>) => {
+				setUploading(false);
 				if (resp.data.code == ResponseCodes.SUCCESS) {
 					swal("Success", "Note uploaded successfully", "success");
 					setOpen(false);
 				} else {
 					swal("Error", resp.data.message, "error");
 				}
+			})
+			.catch((error) => {
+				swal("Error", "Error in uploading note: " + error, "error");
+				setUploading(false);
 			});
 	};
 
@@ -174,6 +186,7 @@ export const NoteUploadDialog: React.FC<NoteUploadDialogProps> = ({
 					onSubmit: noteUploadSubmit,
 				}}
 			>
+				{isUploading&&<LineProgressBuffer progress={progress} buffer={buffer} />}
 				<DialogTitle>Upload your own note!</DialogTitle>
 				<DialogContent>
 					<DialogContentText>

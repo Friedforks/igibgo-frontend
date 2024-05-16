@@ -52,7 +52,7 @@ export const BookmarkDialog = ({
 		getBookmarked(); // the user's already saved bookmarks for this note
 	}, []);
 	useEffect(() => {
-		const start = performance.now();
+		// const start = performance.now();
 
 		// O(N^3)
 		setCheckedStatus(
@@ -66,12 +66,12 @@ export const BookmarkDialog = ({
 			)
 		);
 
-		const end = performance.now();
-		console.log(
-			`Time consuming function setCheckedStatus execution time: ${
-				end - start
-			} ms`
-		);
+		// const end = performance.now();
+		// console.log(
+		// 	`Time consuming function setCheckedStatus execution time: ${
+		// 		end - start
+		// 	} ms`
+		// );
 	}, [bookmarked, availableBookmarks]);
 
 	const getBookmarked = () => {
@@ -94,10 +94,10 @@ export const BookmarkDialog = ({
 				},
 			})
 			.then((response: AxiosResponse<APIResponse<Bookmark[]>>) => {
-				console.log(
-					"BookmarkDialog.tsx getUserBookmarks response.data.data",
-					response.data.data
-				);
+				// console.log(
+				// 	"BookmarkDialog.tsx getUserBookmarks response.data.data",
+				// 	response.data.data
+				// );
 				setAvailableBookmarks(response.data.data);
 			});
 	};

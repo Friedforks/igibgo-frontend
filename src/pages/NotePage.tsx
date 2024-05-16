@@ -7,19 +7,16 @@ import ResponseCodes from "../entity/ResponseCodes.ts";
 import swal from "sweetalert";
 import { Note } from "../entity/Note.ts";
 import {
-	Avatar,
 	Box,
 	Breadcrumbs,
 	Button,
 	Chip,
-	Divider,
 	FormControl,
 	Grid,
 	IconButton,
 	InputLabel,
 	List,
 	ListItem,
-	ListItemAvatar,
 	ListItemButton,
 	ListItemIcon,
 	ListItemText,
@@ -27,12 +24,9 @@ import {
 	OutlinedInput,
 	Select,
 	SelectChangeEvent,
-	Stack,
 	TextField,
 	Typography,
 } from "@mui/material";
-import VisibilityOutlinedIcon from "@mui/icons-material/RemoveRedEye";
-import ThumbUpAltOutlinedIcon from "@mui/icons-material/ThumbUpAltOutlined";
 import CalendarMonthTwoToneIcon from "@mui/icons-material/CalendarMonthTwoTone";
 import {
 	ArrowBackIos,
@@ -41,8 +35,9 @@ import {
 	RemoveRedEyeTwoTone,
 	ThumbUpAltTwoTone,
 } from "@mui/icons-material";
-import { NoteUploadDialog } from "../components/NoteUploadDialog.tsx";
+import { NoteUploadDialog } from "../components/Note/NoteUploadDialog.tsx";
 import { useNavigate } from "react-router-dom";
+import { NoteList } from "../components/Note/NoteList.tsx";
 
 export const NotePage = () => {
 	const [noteList, setNoteList] = useState<Note[]>([]);
@@ -188,7 +183,9 @@ export const NotePage = () => {
 							id="demo-multiple-chip"
 							multiple
 							value={selectedTags}
-							onChange={(event: SelectChangeEvent<string[]>) => handleTagSelectChange(event)}
+							onChange={(event: SelectChangeEvent<string[]>) =>
+								handleTagSelectChange(event)
+							}
 							input={
 								<OutlinedInput
 									id="select-multiple-chip"
@@ -332,80 +329,10 @@ export const NotePage = () => {
 					</Box>
 				</Grid>
 				<Grid item xs={9}>
-					<List sx={{ width: "100%" }}>
-						{noteList.map((value) => (
-							<ListItem
-								key={value.noteId}
-								alignItems="flex-start"
-								disablePadding
-							>
-								<ListItemButton
-									onClick={() =>
-										handleNoteListItemClick(value.noteId)
-									}
-								>
-									<ListItemAvatar>
-										<Avatar
-											alt="user avatar"
-											src={value.author.avatarUrl}
-										/>
-									</ListItemAvatar>
-									<ListItemText
-										primary={value.title}
-										secondary={
-											<Stack
-												direction="row"
-												divider={
-													<Divider
-														orientation="vertical"
-														flexItem
-													/>
-												}
-												spacing={1}
-											>
-												<>
-													<VisibilityOutlinedIcon
-														fontSize="small"
-														sx={{
-															marginRight: "3px",
-														}}
-													/>
-													<Typography
-														variant="body2"
-														color="text.secondary"
-														sx={{
-															marginRight: "20px",
-														}}
-													>
-														{value.viewCount}
-													</Typography>
-												</>
-												<>
-													<ThumbUpAltOutlinedIcon
-														fontSize="small"
-														sx={{
-															marginRight: "3px",
-														}}
-													/>
-													<Typography
-														variant="body2"
-														color="text.secondary"
-													>
-														{value.likeCount}
-													</Typography>
-												</>
-											</Stack>
-										}
-									/>
-									<Stack direction="row" spacing={1}>
-										{value.tags.map((tag) => (
-											<Chip label={tag.tagText}></Chip>
-										))}
-									</Stack>
-								</ListItemButton>
-							</ListItem>
-						))}
-					</List>
+					<NoteList
+						noteList={noteList}
+						handleNoteListItemClick={handleNoteListItemClick}
+					/>
 				</Grid>
 			</Grid>
 			<NoteUploadDialog open={showDialog} setOpen={setShowDialog} />

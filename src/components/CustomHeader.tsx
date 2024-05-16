@@ -3,6 +3,7 @@ import {
 	Avatar,
 	Box,
 	Button,
+	CircularProgress,
 	Dialog,
 	DialogActions,
 	DialogContent,
@@ -21,6 +22,7 @@ import ResponseCodes from "../entity/ResponseCodes.ts";
 import swal from "sweetalert";
 import { FUser } from "../entity/FUser.ts";
 import { useNavigate } from "react-router-dom";
+import { FormBackdrop } from "./FormBackdrop.tsx";
 
 const CustomHeader = () => {
 	// button onclick alert
@@ -62,15 +64,10 @@ const CustomHeader = () => {
 						"userInfo",
 						JSON.stringify(response.data.data)
 					);
-					swal(
-						"Success!",
-						"Login successfully! Welcome :" +
-							response.data.data.username,
-						"success"
-					);
 					setUserData(response.data.data);
 					setLoginStatus(true);
 					handleClose();
+					location.reload();
 				} else {
 					swal("Error!", response.data.message, "error");
 				}
@@ -82,8 +79,10 @@ const CustomHeader = () => {
 			});
 	};
 
+	const [backdropOpen, setBackdropOpen] = useState<boolean>(false);
 	const register1Submit = (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
+		setBackdropOpen(true);
 		const formData = new FormData(event.currentTarget);
 		const email = formData.get("email") as string;
 		const password = formData.get("password") as string;
@@ -95,6 +94,7 @@ const CustomHeader = () => {
 				},
 			})
 			.then((response: AxiosResponse<APIResponse<string>>) => {
+				setBackdropOpen(false);
 				if (response.data.code == ResponseCodes.SUCCESS) {
 					swal(
 						"Success!",
@@ -109,6 +109,7 @@ const CustomHeader = () => {
 				}
 			})
 			.catch((error: AxiosResponse<string>) => {
+				setBackdropOpen(false);
 				swal("Error!", error.data, "error");
 				setLoginStatus(false);
 				setRegisterDialogOpen(false);
@@ -117,12 +118,18 @@ const CustomHeader = () => {
 
 	const register2Submit = (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
+		setBackdropOpen(true);
 		const formData = new FormData(event.currentTarget);
 		const username = formData.get("username") as string;
 		const email = formData.get("email") as string;
 		const password = formData.get("password") as string;
 		const avatar = formData.get("avatar") as File;
 		const authCode = formData.get("authCode") as string;
+		// check if avatar is selected
+		if (avatar.size == 0) {
+			swal("Error!", "Please upload your avatar", "error");
+			return;
+		}
 
 		const data = new FormData();
 		data.append("username", username);
@@ -133,19 +140,22 @@ const CustomHeader = () => {
 		axiosInstance
 			.post("/fuser/register2", data)
 			.then((response: AxiosResponse<APIResponse<FUser>>) => {
+				setBackdropOpen(false);
 				if (response.data.code == ResponseCodes.SUCCESS) {
-					swal("Success!", "You are registered now.", "success");
 					localStorage.setItem("token", response.data.data.token);
 					// update user data
 					setUserData(response.data.data);
 					// save token
 					setRegisterDialog2Open(false);
 					setLoginStatus(true);
+					// refresh window
+					location.reload();
 				} else {
 					swal("Error!", response.data.message, "error");
 				}
 			})
 			.catch((error: AxiosResponse<APIResponse<string>>) => {
+				setBackdropOpen(false);
 				alert("Error happened during register: " + error.data.message);
 				setLoginStatus(false);
 			});
@@ -160,14 +170,15 @@ const CustomHeader = () => {
 			})
 			.then((response: AxiosResponse<boolean>) => {
 				if (response.data) {
-					swal("Success!", "Logout successfully!", "success");
 					localStorage.removeItem("token");
 					setLoginStatus(false);
+					location.reload();
 				} else {
 					swal("Error!", "Logout failed!", "error");
 				}
 			});
 	};
+
 	const navigate = useNavigate();
 
 	useEffect(() => {
@@ -329,6 +340,9 @@ const CustomHeader = () => {
 					onSubmit: register1Submit,
 				}}
 			>
+				<FormBackdrop open={backdropOpen}>
+					<CircularProgress color="inherit" />
+				</FormBackdrop>
 				<DialogTitle>Register an account in Study Hive!</DialogTitle>
 
 				<DialogContent>
@@ -383,6 +397,9 @@ const CustomHeader = () => {
 					onSubmit: register2Submit,
 				}}
 			>
+				<FormBackdrop open={backdropOpen}>
+					<CircularProgress color="inherit" />
+				</FormBackdrop>
 				<DialogTitle>Register an account in Study Hive!</DialogTitle>
 				<DialogContent>
 					<DialogContentText>
