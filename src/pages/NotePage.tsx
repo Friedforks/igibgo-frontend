@@ -1,4 +1,3 @@
-import CustomHeader from "../components/CustomHeader.tsx";
 import { useEffect, useState } from "react";
 import axiosInstance from "../utils/AxiosInstance.ts";
 import { AxiosResponse } from "axios";
@@ -143,7 +142,6 @@ export const NotePage = () => {
 
 	return (
 		<>
-			<CustomHeader />
 			<Grid
 				container
 				direction="row"

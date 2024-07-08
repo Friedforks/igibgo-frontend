@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
 import { FUser } from "../entity/FUser";
 import { useEffect, useState } from "react";
-import CustomHeader from "../components/CustomHeader";
+import CustomHeader from "../components/HomePage/CustomHeader.tsx";
 import { Box, Grid, Skeleton, Tab } from "@mui/material";
 import axiosInstance from "../utils/AxiosInstance";
 import { AxiosResponse } from "axios";
@@ -71,7 +71,6 @@ export const UserPage = () => {
 
 	return (
 		<>
-			<CustomHeader />
 			<div>
 				<Grid
 					container

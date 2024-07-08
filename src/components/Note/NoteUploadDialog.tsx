@@ -20,7 +20,7 @@ import ResponseCodes from "../../entity/ResponseCodes";
 import { FUser } from "../../entity/FUser";
 import { Collection } from "../../entity/Collection";
 import { AxiosResponse } from "axios";
-import { LineProgressBuffer } from "../LineProgressBuffer";
+import { LineProgressBuffer } from "../Upload/LineProgressBuffer.tsx";
 
 type NoteUploadDialogProps = {
 	open: boolean;

@@ -4,6 +4,8 @@ import { NotePage } from "./pages/NotePage.tsx";
 import { TestPage } from "./pages/TestPage.tsx";
 import { NoteOpenPage } from "./pages/NoteOpenPage.tsx";
 import { UserPage } from "./pages/UserPage.tsx";
+import { VideoPage } from "./pages/VideoPage.tsx";
+import CustomHeader1 from "./components/HomePage/CustomHeader1.tsx";
 
 function App() {
 	const router = createBrowserRouter([
@@ -16,6 +18,10 @@ function App() {
 			element: <NotePage />,
 		},
 		{
+			path: "/video",
+			element: <VideoPage />,
+		},
+		{
 			path: "/test",
 			element: <TestPage />,
 		},
@@ -26,11 +32,13 @@ function App() {
 		{
 			path: "/user/:userId",
 			element: <UserPage />,
-		}
+		},
 	]);
 	return (
 		<>
-			<RouterProvider router={router} />
+			<CustomHeader1 >
+				<RouterProvider router={router} />
+			</CustomHeader1>
 		</>
 	);
 }
