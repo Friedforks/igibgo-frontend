@@ -240,7 +240,11 @@ const CustomHeader = () => {
 									>
 										Notes
 									</Button>
-									<Button color="inherit">Videos</Button>
+									<Button color="inherit"
+											onClick={()=>{
+												navigate("/video");
+											}}
+									>Videos</Button>
 									<Button color="inherit">Forum</Button>
 								</Box>
 							</Grid>
