@@ -8,7 +8,7 @@ import {
 	DialogActions,
 	Button,
 } from "@mui/material";
-import { FormBackdrop } from "../FormBackdrop";
+import { CustomBackdrop } from "../CustomBackdrop";
 import axiosInstance from "../../utils/AxiosInstance";
 import { AxiosResponse } from "axios";
 import APIResponse from "../../entity/APIResponse";
@@ -79,9 +79,9 @@ export const RegisterDialog1 = ({
 					onSubmit: register1Submit,
 				}}
 			>
-				<FormBackdrop open={backdropOpen}>
+				<CustomBackdrop open={backdropOpen}>
 					<CircularProgress color="inherit" />
-				</FormBackdrop>
+				</CustomBackdrop>
 				<DialogTitle>Register an account in Study Hive!</DialogTitle>
 
 				<DialogContent>

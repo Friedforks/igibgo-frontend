@@ -26,7 +26,7 @@ import ResponseCodes from "../../entity/ResponseCodes.ts";
 import swal from "sweetalert";
 import { FUser } from "../../entity/FUser.ts";
 import { useNavigate } from "react-router-dom";
-import { FormBackdrop } from "../FormBackdrop.tsx";
+import { CustomBackdrop } from "../CustomBackdrop.tsx";
 
 const CustomHeader = () => {
 	// button onclick alert
@@ -317,9 +317,9 @@ const CustomHeader = () => {
 					onSubmit: register1Submit,
 				}}
 			>
-				<FormBackdrop open={backdropOpen}>
+				<CustomBackdrop open={backdropOpen}>
 					<CircularProgress color="inherit" />
-				</FormBackdrop>
+				</CustomBackdrop>
 				<DialogTitle>Register an account in Study Hive!</DialogTitle>
 
 				<DialogContent>
@@ -374,9 +374,9 @@ const CustomHeader = () => {
 					onSubmit: register2Submit,
 				}}
 			>
-				<FormBackdrop open={backdropOpen}>
+				<CustomBackdrop open={backdropOpen}>
 					<CircularProgress color="inherit" />
-				</FormBackdrop>
+				</CustomBackdrop>
 				<DialogTitle>Register an account in Study Hive!</DialogTitle>
 				<DialogContent>
 					<DialogContentText>

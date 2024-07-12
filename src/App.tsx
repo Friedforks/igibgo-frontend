@@ -8,39 +8,39 @@ import { VideoPage } from "./pages/VideoPage.tsx";
 import CustomHeader1 from "./components/HomePage/CustomHeader1.tsx";
 
 function App() {
-	const router = createBrowserRouter([
-		{
-			path: "/",
-			element: <HomePage />,
-		},
-		{
-			path: "/note",
-			element: <NotePage />,
-		},
-		{
-			path: "/video",
-			element: <VideoPage />,
-		},
-		{
-			path: "/test",
-			element: <TestPage />,
-		},
-		{
-			path: "/note/open/:noteId",
-			element: <NoteOpenPage />,
-		},
-		{
-			path: "/user/:userId",
-			element: <UserPage />,
-		},
-	]);
-	return (
-		<>
-			<CustomHeader1 >
-				<RouterProvider router={router} />
-			</CustomHeader1>
-		</>
-	);
+    const router = createBrowserRouter([
+        {
+            path: "/",
+            element: <HomePage />,
+        },
+        {
+            path: "/note",
+            element: <NotePage />,
+        },
+        {
+            path: "/video",
+            element: <VideoPage />,
+        },
+        {
+            path: "/test",
+            element: <TestPage />,
+        },
+        {
+            path: "/note/open/:noteId",
+            element: <NoteOpenPage />,
+        },
+        {
+            path: "/user/:userId",
+            element: <UserPage />,
+        },
+    ]);
+    return (
+        <>
+            <CustomHeader1>
+                <RouterProvider router={router} />
+            </CustomHeader1>
+        </>
+    );
 }
 
 export default App;

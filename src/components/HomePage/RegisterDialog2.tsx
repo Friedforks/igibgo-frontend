@@ -11,7 +11,7 @@ import {
 	Avatar,
 	Stack,
 } from "@mui/material";
-import { FormBackdrop } from "../FormBackdrop";
+import { CustomBackdrop } from "../CustomBackdrop";
 import { AxiosResponse } from "axios";
 import APIResponse from "../../entity/APIResponse";
 import { FUser } from "../../entity/FUser";
@@ -97,9 +97,9 @@ export const RegisterDialog2 = ({
 					onSubmit: register2Submit,
 				}}
 			>
-				<FormBackdrop open={backdropOpen}>
+				<CustomBackdrop open={backdropOpen}>
 					<CircularProgress color="inherit" />
-				</FormBackdrop>
+				</CustomBackdrop>
 				<DialogTitle>Register an account in Study Hive!</DialogTitle>
 				<DialogContent>
 					<DialogContentText>
