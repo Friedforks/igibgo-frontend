@@ -103,7 +103,7 @@ const CustomHeader = () => {
 					swal(
 						"Success!",
 						"We've sent an email to your email address." +
-							" Please check your email and follow the instructions to finish the registration.",
+						" Please check your email and follow the instructions to finish the registration.",
 						"success"
 					);
 					setRegisterDialogOpen(false);
