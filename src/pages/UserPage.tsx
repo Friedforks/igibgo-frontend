@@ -5,7 +5,7 @@ import { Box, Grid, Skeleton, Tab } from "@mui/material";
 import axiosInstance from "../utils/AxiosInstance";
 import { AxiosResponse } from "axios";
 import APIResponse from "../entity/APIResponse";
-import { ShortUserInfoDisplay } from "../components/ShortUserInfoDisplay";
+import { ShortUserInfoDisplay } from "../components/UtilComponents/ShortUserInfoDisplay.tsx";
 import { TabContext, TabList } from "@mui/lab";
 import { Note } from "../entity/Note";
 import { UserNotesTab } from "../components/UserPage/UserNotesTab";

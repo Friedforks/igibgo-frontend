@@ -30,7 +30,7 @@ import React, { useEffect, useState } from "react";
 import axiosInstance from "../utils/AxiosInstance";
 import APIResponse from "../entity/APIResponse";
 import { Note } from "../entity/Note";
-import { ShortUserInfoDisplay } from "../components/ShortUserInfoDisplay";
+import { ShortUserInfoDisplay } from "../components/UtilComponents/ShortUserInfoDisplay.tsx";
 import { FUser } from "../entity/FUser";
 import swal from "sweetalert";
 import { AxiosResponse } from "axios";
@@ -304,13 +304,12 @@ export const NoteOpenPage = () => {
 				container
 				spacing={2}
 				style={{
-					paddingLeft: "5%",
-					paddingTop: "2%",
+					padding: "1rem",
 				}}
 			>
 				<Grid item xs={8}>
 					{/* Title section */}
-					<Typography variant="h6">{currentNote?.title}</Typography>
+					<Typography variant="h5">{currentNote?.title}</Typography>
 					<div style={{ marginTop: "5px" }}>
 						<Stack direction="row" spacing={2}>
 							<div>

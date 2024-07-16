@@ -6,6 +6,8 @@ import { NoteOpenPage } from "./pages/NoteOpenPage.tsx";
 import { UserPage } from "./pages/UserPage.tsx";
 import { VideoPage } from "./pages/VideoPage.tsx";
 import CustomHeader1 from "./components/HomePage/CustomHeader1.tsx";
+import { VideoSearchPage } from "./pages/VideoSearchPage.tsx";
+import { VideoOpenPage } from "./pages/VideoOpenPage.tsx";
 
 function App() {
     const router = createBrowserRouter([
@@ -20,6 +22,14 @@ function App() {
         {
             path: "/video",
             element: <VideoPage />,
+        },
+        {
+            path: "/video/open/:videoId",
+            element: <VideoOpenPage/>
+        },
+        {
+            path: "/video/search",
+            element: <VideoSearchPage/>
         },
         {
             path: "/test",

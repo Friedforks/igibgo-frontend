@@ -31,3 +31,7 @@ export const checkLoginStatus = async (): Promise<boolean> => {
     }
     return false;
 }
+
+export const getUserInfo = ():FUser=> {
+    return JSON.parse(localStorage.getItem("userInfo") as string) as FUser;
+}

@@ -16,17 +16,17 @@ import {
     CircularProgress,
     Stack,
 } from "@mui/material";
-import { LineProgressBuffer } from "../Upload/LineProgressBuffer";
+import { LineProgressBuffer } from "../Upload/LineProgressBuffer.tsx";
 import { useEffect, useRef, useState } from "react";
-import { CustomBackdrop } from "../CustomBackdrop";
-import { CollectionDialog } from "./CollectionDialog";
-import { Collection } from "../../entity/Collection";
+import { CustomBackdrop } from "./CustomBackdrop.tsx";
+import { CollectionDialog } from "../Video/CollectionDialog.tsx";
+import { Collection } from "../../entity/Collection.ts";
 import { AxiosResponse } from "axios";
-import APIResponse from "../../entity/APIResponse";
-import { FUser } from "../../entity/FUser";
-import ResponseCodes from "../../entity/ResponseCodes";
-import axiosInstance from "../../utils/AxiosInstance";
-import { checkLoginStatus } from "../../utils/LoginUtil";
+import APIResponse from "../../entity/APIResponse.ts";
+import { FUser } from "../../entity/FUser.ts";
+import ResponseCodes from "../../entity/ResponseCodes.ts";
+import axiosInstance from "../../utils/AxiosInstance.ts";
+import { checkLoginStatus } from "../../utils/LoginUtil.ts";
 
 type VideoUploadDialogProps = {
     videoUploadDialogOpen: boolean;
@@ -380,7 +380,7 @@ export const VideoUploadDialog = ({
                             }}
                         >
                             {availableCollections.map((collection) => (
-                                <MenuItem value={collection.collectionId}>
+                                <MenuItem value={collection.collectionId} key={collection.collectionId}>
                                     {collection.collectionName}
                                 </MenuItem>
                             ))}

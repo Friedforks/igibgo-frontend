@@ -26,7 +26,7 @@ import ResponseCodes from "../../entity/ResponseCodes";
 import { Description, Forum, Home, SmartDisplay } from "@mui/icons-material";
 import { RegisterDialog1 } from "./RegisterDialog1";
 import { RegisterDialog2 } from "./RegisterDialog2";
-import {CustomBackdrop} from "../CustomBackdrop.tsx";
+import {CustomBackdrop} from "../UtilComponents/CustomBackdrop.tsx";
 
 const drawerWidth = 240;
 

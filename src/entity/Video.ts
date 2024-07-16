@@ -36,12 +36,12 @@ export class Video {
     collection: Collection;
     videoUrl: string;
     videoCoverUrl: string;
-    uploadDate: Date;
+    uploadDate: string;
     title: string;
     replies: VideoReply[];
     tags: VideoTag[];
 
-    constructor(videoId: string, author: FUser, likeCount: number, viewCount: number, saveCount: number, collection: Collection, videoUrl: string, videoCoverUrl: string, uploadDate: Date, title: string, replies: VideoReply[], tags: VideoTag[]) {
+    constructor(videoId: string, author: FUser, likeCount: number, viewCount: number, saveCount: number, collection: Collection, videoUrl: string, videoCoverUrl: string, uploadDate: string, title: string, replies: VideoReply[], tags: VideoTag[]) {
         this.videoId = videoId;
         this.author = author;
         this.likeCount = likeCount;

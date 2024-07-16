@@ -8,7 +8,7 @@ import {
 	DialogActions,
 	Button,
 } from "@mui/material";
-import { CustomBackdrop } from "../CustomBackdrop";
+import { CustomBackdrop } from "../UtilComponents/CustomBackdrop.tsx";
 import axiosInstance from "../../utils/AxiosInstance";
 import { AxiosResponse } from "axios";
 import APIResponse from "../../entity/APIResponse";

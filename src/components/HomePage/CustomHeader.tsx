@@ -26,7 +26,7 @@ import ResponseCodes from "../../entity/ResponseCodes.ts";
 import swal from "sweetalert";
 import { FUser } from "../../entity/FUser.ts";
 import { useNavigate } from "react-router-dom";
-import { CustomBackdrop } from "../CustomBackdrop.tsx";
+import { CustomBackdrop } from "../UtilComponents/CustomBackdrop.tsx";
 
 const CustomHeader = () => {
 	// button onclick alert
