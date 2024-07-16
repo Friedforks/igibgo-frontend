@@ -4,35 +4,43 @@ import { NotePage } from "./pages/NotePage.tsx";
 import { TestPage } from "./pages/TestPage.tsx";
 import { NoteOpenPage } from "./pages/NoteOpenPage.tsx";
 import { UserPage } from "./pages/UserPage.tsx";
+import { VideoPage } from "./pages/VideoPage.tsx";
+import CustomHeader1 from "./components/HomePage/CustomHeader1.tsx";
 
 function App() {
-	const router = createBrowserRouter([
-		{
-			path: "/",
-			element: <HomePage />,
-		},
-		{
-			path: "/note",
-			element: <NotePage />,
-		},
-		{
-			path: "/test",
-			element: <TestPage />,
-		},
-		{
-			path: "/note/open/:noteId",
-			element: <NoteOpenPage />,
-		},
-		{
-			path: "/user/:userId",
-			element: <UserPage />,
-		}
-	]);
-	return (
-		<>
-			<RouterProvider router={router} />
-		</>
-	);
+    const router = createBrowserRouter([
+        {
+            path: "/",
+            element: <HomePage />,
+        },
+        {
+            path: "/note",
+            element: <NotePage />,
+        },
+        {
+            path: "/video",
+            element: <VideoPage />,
+        },
+        {
+            path: "/test",
+            element: <TestPage />,
+        },
+        {
+            path: "/note/open/:noteId",
+            element: <NoteOpenPage />,
+        },
+        {
+            path: "/user/:userId",
+            element: <UserPage />,
+        },
+    ]);
+    return (
+        <>
+            <CustomHeader1>
+                <RouterProvider router={router} />
+            </CustomHeader1>
+        </>
+    );
 }
 
 export default App;

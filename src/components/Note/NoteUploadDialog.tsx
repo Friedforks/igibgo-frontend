@@ -20,7 +20,8 @@ import ResponseCodes from "../../entity/ResponseCodes";
 import { FUser } from "../../entity/FUser";
 import { Collection } from "../../entity/Collection";
 import { AxiosResponse } from "axios";
-import { LineProgressBuffer } from "../LineProgressBuffer";
+import { LineProgressBuffer } from "../Upload/LineProgressBuffer.tsx";
+import { checkLoginStatus } from "../../utils/LoginUtil.ts";
 
 type NoteUploadDialogProps = {
 	open: boolean;
@@ -40,6 +41,7 @@ export const NoteUploadDialog: React.FC<NoteUploadDialogProps> = ({
 	const [isUploading, setUploading] = useState(false);
 	const [progress, setProgress] = useState(0);
 	const [buffer, setBuffer] = useState(10);
+
 	const getCollections = () => {
 		// get collections
 		const userInfo = localStorage.getItem("userInfo");
@@ -100,7 +102,7 @@ export const NoteUploadDialog: React.FC<NoteUploadDialogProps> = ({
 		}
 	};
 
-	const noteUploadSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+	const noteUploadSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
 		const formData = new FormData(event.currentTarget);
 		const noteFile = formData.get("noteFile") as File;
@@ -136,6 +138,10 @@ export const NoteUploadDialog: React.FC<NoteUploadDialogProps> = ({
 			swal("Error", "Please select a collection", "error");
 			return;
 		}
+        if(await checkLoginStatus() == false) {
+            swal("Error", "Please login first. You can refresh the page to do so.", "error");
+        }
+
 		console.log("collectionId" + collectionId);
 		setUploading(true);
 		axiosInstance

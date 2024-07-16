@@ -15,7 +15,6 @@ import {
 	TextField,
 	Typography,
 } from "@mui/material";
-import CustomHeader from "../components/CustomHeader";
 import {
 	Comment,
 	CommentOutlined,
@@ -35,7 +34,7 @@ import { ShortUserInfoDisplay } from "../components/ShortUserInfoDisplay";
 import { FUser } from "../entity/FUser";
 import swal from "sweetalert";
 import { AxiosResponse } from "axios";
-import { BookmarkDialog } from "../components/BookmarkDialog";
+import { BookmarkDialog } from "../components/Upload/BookmarkDialog.tsx";
 import ResponseCodes from "../entity/ResponseCodes";
 import { NoteReply } from "../entity/NoteReply";
 import { useNavigate, useParams } from "react-router-dom";
@@ -301,7 +300,6 @@ export const NoteOpenPage = () => {
 
 	return (
 		<>
-			<CustomHeader />
 			<Grid
 				container
 				spacing={2}

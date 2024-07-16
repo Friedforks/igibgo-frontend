@@ -10,19 +10,23 @@ import {
 	DialogContentText,
 	DialogTitle,
 	Grid,
+	IconButton,
 	TextField,
 	Toolbar,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import axiosInstance from "../utils/AxiosInstance.ts";
+import axiosInstance from "../../utils/AxiosInstance.ts";
 import { AxiosResponse } from "axios";
-import { CloudUpload } from "@mui/icons-material";
-import APIResponse from "../entity/APIResponse.ts";
-import ResponseCodes from "../entity/ResponseCodes.ts";
+import {
+	CloudUpload,
+	MenuOutlined,
+} from "@mui/icons-material";
+import APIResponse from "../../entity/APIResponse.ts";
+import ResponseCodes from "../../entity/ResponseCodes.ts";
 import swal from "sweetalert";
-import { FUser } from "../entity/FUser.ts";
+import { FUser } from "../../entity/FUser.ts";
 import { useNavigate } from "react-router-dom";
-import { FormBackdrop } from "./FormBackdrop.tsx";
+import { CustomBackdrop } from "../CustomBackdrop.tsx";
 
 const CustomHeader = () => {
 	// button onclick alert
@@ -215,11 +219,22 @@ const CustomHeader = () => {
 		}
 	};
 
+
+
 	return (
 		<>
 			<Box sx={{ flexGrow: 1 }}>
 				<AppBar position="static">
 					<Toolbar>
+						<IconButton
+							size="large"
+							edge="start"
+							color="inherit"
+							aria-label="menu"
+							sx={{ mr: 2 }}
+						>
+							<MenuOutlined />
+						</IconButton>
 						<Grid container justifyContent="space-between">
 							<Grid item>
 								<Box display="flex" alignItems="center">
@@ -240,11 +255,14 @@ const CustomHeader = () => {
 									>
 										Notes
 									</Button>
-									<Button color="inherit"
-											onClick={()=>{
-												navigate("/video");
-											}}
-									>Videos</Button>
+									<Button
+										color="inherit"
+										onClick={() => {
+											navigate("/video");
+										}}
+									>
+										Videos
+									</Button>
 									<Button color="inherit">Forum</Button>
 								</Box>
 							</Grid>
@@ -288,51 +306,6 @@ const CustomHeader = () => {
 					</Toolbar>
 				</AppBar>
 			</Box>
-			<Dialog
-				open={loginDialogOpen}
-				onClose={() => {
-					setLoginDialogOpen(false);
-				}}
-				PaperProps={{
-					component: "form",
-					onSubmit: loginSubmit,
-				}}
-			>
-				<DialogTitle>Login to Study Hive!</DialogTitle>
-				<DialogContent>
-					<DialogContentText>
-						Please input your <b>Huili email </b>address and
-						password to login. We promise that we won't share your
-						email with anyone else and the password will be one-way
-						encrypted.
-					</DialogContentText>
-					<TextField
-						autoFocus
-						required
-						margin="dense"
-						name="email"
-						label="Huili Email Address"
-						type="email"
-						fullWidth
-						variant="standard"
-					/>
-					<TextField
-						autoFocus
-						required
-						margin="dense"
-						name="password"
-						label="Password"
-						type="password"
-						fullWidth
-						variant="standard"
-					/>
-				</DialogContent>
-				<DialogActions>
-					<Button onClick={handleClose}>Cancel</Button>
-					<Button type="submit">Login</Button>
-				</DialogActions>
-			</Dialog>
-
 			{/*register 1*/}
 			<Dialog
 				open={registerDialogOpen}
@@ -344,9 +317,9 @@ const CustomHeader = () => {
 					onSubmit: register1Submit,
 				}}
 			>
-				<FormBackdrop open={backdropOpen}>
+				<CustomBackdrop open={backdropOpen}>
 					<CircularProgress color="inherit" />
-				</FormBackdrop>
+				</CustomBackdrop>
 				<DialogTitle>Register an account in Study Hive!</DialogTitle>
 
 				<DialogContent>
@@ -401,9 +374,9 @@ const CustomHeader = () => {
 					onSubmit: register2Submit,
 				}}
 			>
-				<FormBackdrop open={backdropOpen}>
+				<CustomBackdrop open={backdropOpen}>
 					<CircularProgress color="inherit" />
-				</FormBackdrop>
+				</CustomBackdrop>
 				<DialogTitle>Register an account in Study Hive!</DialogTitle>
 				<DialogContent>
 					<DialogContentText>
