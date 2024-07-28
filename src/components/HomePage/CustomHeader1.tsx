@@ -155,7 +155,7 @@ const CustomHeader1: React.FC<CustomHeader1Props> = ({ children: content }) => {
         if (userId) {
             window.location.href = "/user/" + userId;
         } else {
-            swal("Error", "You are not logged in", "error");
+            sweetAlert("Error", "You are not logged in", "error");
         }
     };
 
@@ -172,7 +172,7 @@ const CustomHeader1: React.FC<CustomHeader1Props> = ({ children: content }) => {
                     setLoginStatus(false);
                     location.reload();
                 } else {
-                    swal("Error!", "Logout failed!", "error");
+                    sweetAlert("Error!", "Logout failed!", "error");
                 }
             });
     };

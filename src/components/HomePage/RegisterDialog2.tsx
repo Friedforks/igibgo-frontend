@@ -42,7 +42,7 @@ export const RegisterDialog2 = ({
 		const authCode = formData.get("authCode") as string;
 		// check if avatar is selected
 		if (avatar.size == 0) {
-			swal("Error!", "Please upload your avatar", "error");
+			sweetAlert("Error!", "Please upload your avatar", "error");
 			return;
 		}
 
@@ -68,7 +68,7 @@ export const RegisterDialog2 = ({
 					// refresh window
 					location.reload();
 				} else {
-					swal("Error!", response.data.message, "error");
+					sweetAlert("Error!", response.data.message, "error");
 				}
 			})
 			.catch((error: AxiosResponse<APIResponse<string>>) => {

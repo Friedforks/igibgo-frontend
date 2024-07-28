@@ -15,7 +15,7 @@ import {
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../../utils/AxiosInstance";
 import APIResponse from "../../entity/APIResponse";
-import swal from "sweetalert";
+import sweetAlert from "sweetalert";
 import ResponseCodes from "../../entity/ResponseCodes";
 import { FUser } from "../../entity/FUser";
 import { Collection } from "../../entity/Collection";
@@ -57,7 +57,7 @@ export const NoteUploadDialog: React.FC<NoteUploadDialogProps> = ({
 					if (response.data.code == ResponseCodes.SUCCESS) {
 						setAvailableCollections(response.data.data);
 					} else {
-						swal("Error", response.data.message, "error");
+						sweetAlert("Error", response.data.message, "error");
 					}
 				});
 		}
@@ -73,7 +73,7 @@ export const NoteUploadDialog: React.FC<NoteUploadDialogProps> = ({
 		const collectionName = formData.get("collectionName") as string;
 		const userInfo = localStorage.getItem("userInfo");
 		if (collectionName.trim() === "") {
-			swal("Error", "Collection name cannot be empty", "error");
+			sweetAlert("Error", "Collection name cannot be empty", "error");
 		}
 		if (userInfo) {
 			axiosInstance
@@ -85,7 +85,7 @@ export const NoteUploadDialog: React.FC<NoteUploadDialogProps> = ({
 				})
 				.then((resp: AxiosResponse<APIResponse<null>>) => {
 					if (resp.data.code == ResponseCodes.SUCCESS) {
-						swal(
+						sweetAlert(
 							"Success",
 							"Collection added successfully",
 							"success"
@@ -94,11 +94,11 @@ export const NoteUploadDialog: React.FC<NoteUploadDialogProps> = ({
 						// update the availableCollections
 						getCollections();
 					} else {
-						swal("Error", resp.data.message, "error");
+						sweetAlert("Error", resp.data.message, "error");
 					}
 				});
 		} else {
-			swal("Error", "Please refresh the page", "error");
+			sweetAlert("Error", "Please refresh the page", "error");
 		}
 	};
 
@@ -112,11 +112,11 @@ export const NoteUploadDialog: React.FC<NoteUploadDialogProps> = ({
 			localStorage.getItem("userInfo") as string
 		) as FUser;
 		if (userInfo == null) {
-			swal("Error", "Please login first", "error");
+			sweetAlert("Error", "Please login first", "error");
 			return;
 		}
 		if (noteFile == null) {
-			swal("Error", "Please select a file to upload", "error");
+			sweetAlert("Error", "Please select a file to upload", "error");
 			return;
 		}
 		const collectionId = collectionValue;
@@ -127,19 +127,19 @@ export const NoteUploadDialog: React.FC<NoteUploadDialogProps> = ({
 		data.append("title", title);
 		data.append("tags", tags);
 		if (title == null || title == "") {
-			swal("Error", "Please enter title", "error");
+			sweetAlert("Error", "Please enter title", "error");
 			return;
 		}
 		if (tags == null || tags == "") {
-			swal("Error", "Please enter tags", "error");
+			sweetAlert("Error", "Please enter tags", "error");
 			return;
 		}
 		if (collectionId == null || collectionId == "") {
-			swal("Error", "Please select a collection", "error");
+			sweetAlert("Error", "Please select a collection", "error");
 			return;
 		}
         if(await checkLoginStatus() == false) {
-            swal("Error", "Please login first. You can refresh the page to do so.", "error");
+            sweetAlert("Error", "Please login first. You can refresh the page to do so.", "error");
         }
 
 		console.log("collectionId" + collectionId);
@@ -158,14 +158,14 @@ export const NoteUploadDialog: React.FC<NoteUploadDialogProps> = ({
 			.then((resp: AxiosResponse<APIResponse<null>>) => {
 				setUploading(false);
 				if (resp.data.code == ResponseCodes.SUCCESS) {
-					swal("Success", "Note uploaded successfully", "success");
+					sweetAlert("Success", "Note uploaded successfully", "success");
 					setOpen(false);
 				} else {
-					swal("Error", resp.data.message, "error");
+					sweetAlert("Error", resp.data.message, "error");
 				}
 			})
 			.catch((error) => {
-				swal("Error", "Error in uploading note: " + error, "error");
+				sweetAlert("Error", "Error in uploading note: " + error, "error");
 				setUploading(false);
 			});
 	};

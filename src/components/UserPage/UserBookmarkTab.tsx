@@ -8,7 +8,7 @@ import { Accordion, AccordionDetails, AccordionSummary } from "@mui/material";
 import { ExpandMoreOutlined } from "@mui/icons-material";
 import { NoteBookmark } from "../../entity/NoteBookmark";
 import { useNavigate } from "react-router-dom";
-import { Note } from "../../entity/Note";
+import { Video } from "../../entity/Note";
 import { NoteList } from "../Note/NoteList";
 
 type UserBookmarkTabProps = {
@@ -16,7 +16,7 @@ type UserBookmarkTabProps = {
 };
 export const UserBookmarkTab = ({ userId }: UserBookmarkTabProps) => {
 	const [bookmarks, setBookmarks] = useState<Bookmark[]>([]);
-	const [noteList, setNoteList] = useState<Note[][]>([[]]);
+	const [noteList, setNoteList] = useState<Video[][]>([[]]);
 	useEffect(() => {
 		getBookmarks();
 	}, []);

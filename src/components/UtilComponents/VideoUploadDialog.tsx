@@ -124,7 +124,7 @@ export const VideoUploadDialog = ({
     >([]);
     const getCollections = async () => {
         if ((await checkLoginStatus()) == false) {
-            swal("Error", "Please login first", "error").then(() => {
+            sweetAlert("Error", "Please login first", "error").then(() => {
                 window.location.reload();
             });
         }
@@ -141,7 +141,7 @@ export const VideoUploadDialog = ({
                     if (response.data.code == ResponseCodes.SUCCESS) {
                         setAvailableCollections(response.data.data);
                     } else {
-                        swal("Error", response.data.message, "error");
+                        sweetAlert("Error", response.data.message, "error");
                     }
                 });
         }
@@ -159,15 +159,15 @@ export const VideoUploadDialog = ({
         // check
         if (!videoFile) {
             // no video file
-            swal("Error", "Video file is not selected", "error");
+            sweetAlert("Error", "Video file is not selected", "error");
         }
         if (!(videoFile?.type == "video/mp4")) {
             // wrong file format
-            swal("Error", "Please upload a video in mp4 format", "error");
+            sweetAlert("Error", "Please upload a video in mp4 format", "error");
         }
         if (!blobs || blobs.length === 0) {
             // no snapshots
-            swal(
+            sweetAlert(
                 "Error",
                 "Please wait until the video covers are automatically generated",
                 "error"
@@ -177,22 +177,22 @@ export const VideoUploadDialog = ({
             !formData.get("title") ||
             (formData.get("title") as string).trim() === ""
         ) {
-            swal("Error", "Please enter a title", "error");
+            sweetAlert("Error", "Please enter a title", "error");
         } else if (
             // no tags
             !formData.get("tags") ||
             (formData.get("tags") as string).trim() === ""
         ) {
-            swal(
+            sweetAlert(
                 "Error",
                 "Please enter at least one tag for the video to be better discovered",
                 "error"
             );
         } else if (!collectionValue) {
             // no collection selected
-            swal("Error", "Please select a collection", "error");
+            sweetAlert("Error", "Please select a collection", "error");
         } else if ((await checkLoginStatus()) == false) {
-            swal("Error", "Please login first", "error").then(() => {
+            sweetAlert("Error", "Please login first", "error").then(() => {
                 window.location.reload();
             });
         } else {
@@ -232,7 +232,7 @@ export const VideoUploadDialog = ({
                     setServerFileProcessing(false);
                     if (resp.data.code == ResponseCodes.SUCCESS) {
                         setVideoUploadDialogOpen(false);
-                        swal(
+                        sweetAlert(
                             "Success",
                             "Video uploaded successfully",
                             "success"
@@ -240,11 +240,11 @@ export const VideoUploadDialog = ({
                             window.location.reload();
                         });
                     } else {
-                        swal("Error", resp.data.message, "error");
+                        sweetAlert("Error", resp.data.message, "error");
                     }
                 })
                 .catch((error) => {
-                    swal("Error", "Error in uploading note: " + error, "error");
+                    sweetAlert("Error", "Error in uploading note: " + error, "error");
                 });
         }
     };

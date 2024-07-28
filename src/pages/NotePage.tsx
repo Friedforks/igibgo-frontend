@@ -3,8 +3,8 @@ import axiosInstance from "../utils/AxiosInstance.ts";
 import { AxiosResponse } from "axios";
 import APIResponse from "../entity/APIResponse.ts";
 import ResponseCodes from "../entity/ResponseCodes.ts";
-import swal from "sweetalert";
-import { Note } from "../entity/Note.ts";
+import sweetAlert from "sweetalert";
+import { Video } from "../entity/Note.ts";
 import {
 	Box,
 	Breadcrumbs,
@@ -39,7 +39,7 @@ import { useNavigate } from "react-router-dom";
 import { NoteList } from "../components/Note/NoteList.tsx";
 
 export const NotePage = () => {
-	const [noteList, setNoteList] = useState<Note[]>([]);
+	const [noteList, setNoteList] = useState<Video[]>([]);
 	const pageSize: number = 10; // fixed page size for pagination
 	const [page, setPage] = useState<number>(0);
 	const [sortBy, setSortBy] = useState<string>("uploadDate");
@@ -68,7 +68,7 @@ export const NotePage = () => {
 						setNoteList(resp.data.data.content);
 						setTotalPages(resp.data.data.totalPages);
 					} else {
-						swal("Error", resp.data.message, "error");
+						sweetAlert("Error", resp.data.message, "error");
 					}
 				});
 		} else if (searchBarValue.length > 0) {
@@ -87,7 +87,7 @@ export const NotePage = () => {
 						setNoteList(resp.data.data.content);
 						setTotalPages(resp.data.data.totalPages);
 					} else {
-						swal("Error", resp.data.message, "error");
+						sweetAlert("Error", resp.data.message, "error");
 					}
 				});
 		} else {
@@ -106,7 +106,7 @@ export const NotePage = () => {
 						setNoteList(response.data.data.content);
 						setTotalPages(response.data.data.totalPages);
 					} else {
-						swal("Error", response.data.message, "error");
+						sweetAlert("Error", response.data.message, "error");
 					}
 				});
 		}
@@ -120,7 +120,7 @@ export const NotePage = () => {
 				if (response.data.code == ResponseCodes.SUCCESS) {
 					setAvailableTags(response.data.data);
 				} else {
-					swal("Error", response.data.message, "error");
+					sweetAlert("Error", response.data.message, "error");
 				}
 			});
 	}, []);

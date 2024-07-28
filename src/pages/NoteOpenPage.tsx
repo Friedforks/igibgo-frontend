@@ -29,23 +29,20 @@ import {
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../utils/AxiosInstance";
 import APIResponse from "../entity/APIResponse";
-import { Note } from "../entity/Note";
+import { Video } from "../entity/Note";
 import { ShortUserInfoDisplay } from "../components/UtilComponents/ShortUserInfoDisplay.tsx";
 import { FUser } from "../entity/FUser";
-import swal from "sweetalert";
+import sweetAlert from "sweetalert";
 import { AxiosResponse } from "axios";
-import { BookmarkDialog } from "../components/Upload/BookmarkDialog.tsx";
+import { NoteBookmarkDialog } from "../components/Note/NoteBookmarkDialog.tsx";
 import ResponseCodes from "../entity/ResponseCodes";
 import { NoteReply } from "../entity/NoteReply";
 import { useNavigate, useParams } from "react-router-dom";
 
 export const NoteOpenPage = () => {
-	const [currentNote, setCurrentNote] = useState<Note>();
+	const [currentNote, setCurrentNote] = useState<Video>();
 	const [loading, setLoading] = useState(true);
 	const [height, setHeight] = useState(window.innerHeight);
-	const [totalLike, setTotalLike] = useState<number>(0);
-	const [totalSave, setTotalSave] = useState<number>(0);
-	const [totalView, setTotalView] = useState<number>(0);
 	const [totalReply, setTotalReply] = useState<number>(0);
 	const [isLiked, setLiked] = useState(false);
 	const [isStarred, setStarred] = useState(false);
@@ -70,7 +67,7 @@ export const NoteOpenPage = () => {
 					userId: userId,
 				},
 			})
-			.then((response: AxiosResponse<APIResponse<Note>>) => {
+			.then((response: AxiosResponse<APIResponse<Video>>) => {
 				const responseData = response.data.data;
 				const date = new Date(responseData.uploadDate);
 				const formattedDate =
@@ -89,9 +86,6 @@ export const NoteOpenPage = () => {
 
 	useEffect(() => {
 		if (currentNote === undefined) return;
-		getTotalLike();
-		getTotalSave();
-		getTotalView();
 		getTotalReply();
 		getReplies();
 		getLikeStatus();
@@ -141,39 +135,6 @@ export const NoteOpenPage = () => {
 			});
 	};
 
-	const getTotalLike = () => {
-		axiosInstance
-			.get("/note/total/like", {
-				params: {
-					noteId: currentNoteId,
-				},
-			})
-			.then((response) => {
-				setTotalLike(response.data.data);
-			});
-	};
-	const getTotalSave = () => {
-		axiosInstance
-			.get("/note/total/save", {
-				params: {
-					noteId: currentNoteId,
-				},
-			})
-			.then((response) => {
-				setTotalSave(response.data.data);
-			});
-	};
-	const getTotalView = () => {
-		axiosInstance
-			.get("/note/total/view", {
-				params: {
-					noteId: currentNoteId,
-				},
-			})
-			.then((response) => {
-				setTotalView(response.data.data);
-			});
-	};
 	const getTotalReply = () => {
 		axiosInstance
 			.get("/note/total/reply", {
@@ -217,7 +178,7 @@ export const NoteOpenPage = () => {
 				setDataUpdateRequired(!dataUpdateRequired);
 			})
 			.catch((error) => {
-				swal("Error", error.response.data.message, "error");
+				sweetAlert("Error", error.response.data.message, "error");
 			});
 	};
 
@@ -246,7 +207,7 @@ export const NoteOpenPage = () => {
 		const replyContent = formData.get("replyContent") as string;
 		// check if reply text is empty
 		if (replyContent === "") {
-			swal("Error", "Reply text cannot be empty", "error");
+			sweetAlert("Error", "Reply text cannot be empty", "error");
 			return;
 		}
 		axiosInstance
@@ -263,13 +224,13 @@ export const NoteOpenPage = () => {
 				setDataUpdateRequired(!dataUpdateRequired);
 			})
 			.catch((error) => {
-				swal("Error", error.response.data.message, "error");
+				sweetAlert("Error", error.response.data.message, "error");
 			});
 	};
 	const deleteReply = (replyId: number) => {
 		const token = localStorage.getItem("token");
 		if (token == null) {
-			swal("Error", "Please login to delete reply", "error");
+			sweetAlert("Error", "Please login to delete reply", "error");
 		} else {
 			axiosInstance
 				.get("/note/delete/reply", {
@@ -283,7 +244,7 @@ export const NoteOpenPage = () => {
 					setDataUpdateRequired(!dataUpdateRequired);
 				})
 				.catch((error) => {
-					swal("Error", error.response.data.message, "error");
+					sweetAlert("Error", error.response.data.message, "error");
 				});
 		}
 	};
@@ -315,19 +276,19 @@ export const NoteOpenPage = () => {
 							<div>
 								<Stack direction="row" spacing={0.5}>
 									<ThumbUpOutlined fontSize="small" />
-									<span>{totalLike}</span>
+									<span>{currentNote?.likeCount}</span>
 								</Stack>
 							</div>
 							<div>
 								<Stack direction="row" spacing={0.5}>
 									<VisibilityOutlined fontSize="small" />
-									<span>{totalView}</span>
+									<span>{currentNote?.viewCount}</span>
 								</Stack>
 							</div>
 							<div>
 								<Stack direction="row" spacing={0.5}>
 									<StarBorderOutlined fontSize="small" />
-									<span>{totalSave}</span>
+									<span>{currentNote?.saveCount}</span>
 								</Stack>
 							</div>
 							<div>{currentNote?.uploadDate.toString()}</div>
@@ -364,7 +325,7 @@ export const NoteOpenPage = () => {
 										</div>
 									)}
 								</div>
-								<span>{totalLike}</span>
+								<span>{currentNote?.likeCount}</span>
 							</Stack>
 						</div>
 						<div>
@@ -380,7 +341,7 @@ export const NoteOpenPage = () => {
 										</div>
 									)}
 								</div>
-								<span>{totalSave}</span>
+								<span>{currentNote?.saveCount}</span>
 							</Stack>
 						</div>
 						<div>
@@ -482,7 +443,7 @@ export const NoteOpenPage = () => {
 					</List>
 				</Grid>
 			</Grid>
-			<BookmarkDialog
+			<NoteBookmarkDialog
 				open={bookmarkDialogOpen}
 				setOpen={setBookmarkDialogOpen}
 				currentNoteId={currentNoteId || ""}

@@ -13,7 +13,7 @@ import APIResponse from "../../entity/APIResponse";
 import { FUser } from "../../entity/FUser";
 import ResponseCodes from "../../entity/ResponseCodes";
 import axiosInstance from "../../utils/AxiosInstance";
-import swal from "sweetalert";
+import sweetAlert from "sweetalert";
 
 type CollectionDialogProps = {
     addCollectionDialogOpen: boolean;
@@ -33,7 +33,7 @@ export const CollectionDialog = ({
         const collectionName = formData.get("collectionName") as string;
         const userInfo = localStorage.getItem("userInfo");
         if (collectionName.trim() === "") {
-            swal("Error", "Collection name cannot be empty", "error");
+            sweetAlert("Error", "Collection name cannot be empty", "error");
         }
         if (userInfo) {
             axiosInstance
@@ -45,7 +45,7 @@ export const CollectionDialog = ({
                 })
                 .then((resp: AxiosResponse<APIResponse<null>>) => {
                     if (resp.data.code == ResponseCodes.SUCCESS) {
-                        swal(
+                        sweetAlert(
                             "Success",
                             "Collection added successfully",
                             "success",
@@ -54,11 +54,11 @@ export const CollectionDialog = ({
                         // update the availableCollections
                         setCollectionListUpdateFlag(!collectionListUpdateFlag);
                     } else {
-                        swal("Error", resp.data.message, "error");
+                        sweetAlert("Error", resp.data.message, "error");
                     }
                 });
         } else {
-            swal("Error", "Please refresh the page", "error");
+            sweetAlert("Error", "Please refresh the page", "error");
         }
     };
 

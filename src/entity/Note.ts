@@ -3,7 +3,7 @@ import { Collection } from "./Collection.ts";
 import { NoteReply } from "./NoteReply.ts";
 import { NoteTag } from "./NoteTag.ts";
 
-export class Note {
+export class Video {
     noteId: string;
     author: FUser;
     collection: Collection;

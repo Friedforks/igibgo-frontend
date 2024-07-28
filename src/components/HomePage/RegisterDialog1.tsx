@@ -47,7 +47,7 @@ export const RegisterDialog1 = ({
 			.then((response: AxiosResponse<APIResponse<string>>) => {
 				setBackdropOpen(false);
 				if (response.data.code == ResponseCodes.SUCCESS) {
-					swal(
+					sweetAlert(
 						"Success!",
 						"We've sent an email to your email address." +
 							" Please check your email and follow the instructions to finish the registration.",
@@ -56,12 +56,12 @@ export const RegisterDialog1 = ({
 					setRegisterDialog1Open(false);
 					setRegisterDialog2Open(true); // open next
 				} else {
-					swal("Error!", response.data.message, "error");
+					sweetAlert("Error!", response.data.message, "error");
 				}
 			})
 			.catch((error: AxiosResponse<string>) => {
 				setBackdropOpen(false);
-				swal("Error!", error.data, "error");
+				sweetAlert("Error!", error.data, "error");
 				setLoginStatus(false);
 				setRegisterDialog1Open(false);
 			});

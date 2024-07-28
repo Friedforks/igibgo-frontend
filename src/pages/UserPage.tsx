@@ -7,7 +7,7 @@ import { AxiosResponse } from "axios";
 import APIResponse from "../entity/APIResponse";
 import { ShortUserInfoDisplay } from "../components/UtilComponents/ShortUserInfoDisplay.tsx";
 import { TabContext, TabList } from "@mui/lab";
-import { Note } from "../entity/Note";
+import { Video } from "../entity/Note";
 import { UserNotesTab } from "../components/UserPage/UserNotesTab";
 import { UserBookmarkTab } from "../components/UserPage/UserBookmarkTab";
 
@@ -20,7 +20,7 @@ export const UserPage = () => {
     const isCurrentUser = currentUserId == savedUserId;
     const [user, setUser] = useState<FUser>();
     const [tabPage, setTabPage] = useState<string>("1");
-    const [noteList, setNoteList] = useState<Note[]>([]);
+    const [noteList, setNoteList] = useState<Video[]>([]);
     useEffect(() => {
         // console.log("debug: currentUserId", currentUserId);
         // console.log("debug: isCurrentUser", isCurrentUser);
@@ -55,7 +55,7 @@ export const UserPage = () => {
     const getNotes = () => {
         axiosInstance
             .get("/note/get/all", { params: { userId: currentUserId } })
-            .then((response: AxiosResponse<APIResponse<Note[]>>) => {
+            .then((response: AxiosResponse<APIResponse<Video[]>>) => {
                 setNoteList(response.data.data);
             });
     };

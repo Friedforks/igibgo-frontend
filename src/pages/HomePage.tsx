@@ -16,11 +16,11 @@ export const HomePage = () => {
 	// 			if (resp.data.code == ResponseCodes.SUCCESS) {
 	// 				setNoteList(resp.data.data.content);
 	// 			} else {
-	// 				swal("Error", resp.data.message, "error");
+	// 				sweetAlert("Error", resp.data.message, "error");
 	// 			}
 	// 		})
 	// 		.catch((err) => {
-	// 			swal("Error", err.message, "error");
+	// 			sweetAlert("Error", err.message, "error");
 	// 		});
 	// }, []);
 	return (

@@ -10,11 +10,11 @@ import {
 	Typography,
 	Chip,
 } from "@mui/material";
-import { Note } from "../../entity/Note";
+import { Video } from "../../entity/Note";
 import { VisibilityOutlined, ThumbUpAltOutlined } from "@mui/icons-material";
 
 type NoteListProps = {
-	noteList: Note[];
+	noteList: Video[];
 	handleNoteListItemClick: (noteId: string) => void;
 };
 
@@ -24,7 +24,7 @@ export const NoteList = ({
 }: NoteListProps) => {
 	return (
 		<List sx={{ width: "100%" }}>
-			{noteList.map((value: Note) => (
+			{noteList.map((value: Video) => (
 				<>
 					<ListItem
 						key={value.noteId}

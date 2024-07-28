@@ -49,11 +49,11 @@ const LoginDialog = ({
 				}
 				// login failed
 				else {
-					swal("Error!", response.data.message, "error");
+					sweetAlert("Error!", response.data.message, "error");
 				}
 			})
 			.catch((error: AxiosResponse<string>) => {
-				swal("Error!", error.data, "error");
+				sweetAlert("Error!", error.data, "error");
 			});
 	};
 	return (
