@@ -26,18 +26,18 @@ import {
 	ThumbUpOutlined,
 	VisibilityOutlined,
 } from "@mui/icons-material";
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import axiosInstance from "../utils/AxiosInstance";
 import APIResponse from "../entity/APIResponse";
-import { Video } from "../entity/Note";
-import { ShortUserInfoDisplay } from "../components/UtilComponents/ShortUserInfoDisplay.tsx";
-import { FUser } from "../entity/FUser";
+import {Video} from "../entity/Note";
+import {ShortUserInfoDisplay} from "../components/UtilComponents/ShortUserInfoDisplay.tsx";
+import {FUser} from "../entity/FUser";
 import sweetAlert from "sweetalert";
-import { AxiosResponse } from "axios";
-import { NoteBookmarkDialog } from "../components/Note/NoteBookmarkDialog.tsx";
+import {AxiosResponse} from "axios";
+import {NoteBookmarkDialog} from "../components/Note/NoteBookmarkDialog.tsx";
 import ResponseCodes from "../entity/ResponseCodes";
-import { NoteReply } from "../entity/NoteReply";
-import { useNavigate, useParams } from "react-router-dom";
+import {NoteReply} from "../entity/NoteReply";
+import {useNavigate, useParams} from "react-router-dom";
 
 export const NoteOpenPage = () => {
 	const [currentNote, setCurrentNote] = useState<Video>();
@@ -70,11 +70,9 @@ export const NoteOpenPage = () => {
 			.then((response: AxiosResponse<APIResponse<Video>>) => {
 				const responseData = response.data.data;
 				const date = new Date(responseData.uploadDate);
-				const formattedDate =
-					date.toLocaleDateString("zh-Hans-CN") +
+				responseData.uploadDate = date.toLocaleDateString("zh-Hans-CN") +
 					" " +
 					date.toLocaleTimeString();
-				responseData.uploadDate = formattedDate;
 				setCurrentNote(responseData);
 				setLoading(false);
 			});
@@ -174,7 +172,6 @@ export const NoteOpenPage = () => {
 				},
 			})
 			.then(() => {
-				getTotalLike();
 				setDataUpdateRequired(!dataUpdateRequired);
 			})
 			.catch((error) => {
@@ -192,7 +189,6 @@ export const NoteOpenPage = () => {
 				},
 			})
 			.then(() => {
-				getTotalLike();
 				setDataUpdateRequired(!dataUpdateRequired);
 			});
 	};
