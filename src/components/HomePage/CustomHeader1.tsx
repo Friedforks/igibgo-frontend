@@ -191,7 +191,7 @@ const CustomHeader1: React.FC<CustomHeader1Props> = ({ children: content }) => {
         {
             text: "Video",
             icon: <SmartDisplay />,
-            location: "/video",
+            location: "/video/search",
         },
         {
             text: "Forum",

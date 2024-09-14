@@ -6,7 +6,6 @@ import { NoteOpenPage } from "./pages/NoteOpenPage.tsx";
 import { UserPage } from "./pages/UserPage.tsx";
 import { VideoPage } from "./pages/VideoPage.tsx";
 import CustomHeader1 from "./components/HomePage/CustomHeader1.tsx";
-import { VideoSearchPage } from "./pages/VideoSearchPage.tsx";
 import { VideoOpenPage } from "./pages/VideoOpenPage.tsx";
 
 function App() {
@@ -20,16 +19,16 @@ function App() {
             element: <NotePage />,
         },
         {
-            path: "/video",
+            path: "/video/search/:title",
+            element: <VideoPage />,
+        },
+        {
+            path: "/video/search",
             element: <VideoPage />,
         },
         {
             path: "/video/open/:videoId",
             element: <VideoOpenPage/>
-        },
-        {
-            path: "/video/search",
-            element: <VideoSearchPage/>
         },
         {
             path: "/test",

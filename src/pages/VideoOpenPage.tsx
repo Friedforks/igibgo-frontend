@@ -108,8 +108,7 @@ export const VideoOpenPage = () => {
         // access the form data
         const formData = new FormData(e.currentTarget);
         const title = formData.get("title") as string;
-        // navigate to '/video/search?title=...'
-        navigate(`/video/search?title=${title}`);
+        navigate(`/video/search/${title}`);
     };
 
     const [commentAreaValue, setCommentAreaValue] = useState<string>("");
