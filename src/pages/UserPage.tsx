@@ -7,9 +7,11 @@ import { AxiosResponse } from "axios";
 import APIResponse from "../entity/APIResponse";
 import { ShortUserInfoDisplay } from "../components/UtilComponents/ShortUserInfoDisplay.tsx";
 import { TabContext, TabList } from "@mui/lab";
-import { Video } from "../entity/Note";
+import { Note } from "../entity/Note";
 import { UserNotesTab } from "../components/UserPage/UserNotesTab";
 import { UserBookmarkTab } from "../components/UserPage/UserBookmarkTab";
+import { UserVideoTab } from "../components/UserPage/UserVideosTab.tsx";
+import { Video } from "../entity/Video.ts";
 
 export const UserPage = () => {
     const params = useParams();
@@ -20,7 +22,8 @@ export const UserPage = () => {
     const isCurrentUser = currentUserId == savedUserId;
     const [user, setUser] = useState<FUser>();
     const [tabPage, setTabPage] = useState<string>("1");
-    const [noteList, setNoteList] = useState<Video[]>([]);
+    const [noteList, setNoteList] = useState<Note[]>([]);
+    const [videoList,setVideoList]=useState<Video[]>([]);
     useEffect(() => {
         // console.log("debug: currentUserId", currentUserId);
         // console.log("debug: isCurrentUser", isCurrentUser);
@@ -37,6 +40,7 @@ export const UserPage = () => {
             });
         getNotes();
         getCurrentUser();
+        getVideos();
     }, [currentUserId]);
 
     const getCurrentUser = () => {
@@ -55,10 +59,18 @@ export const UserPage = () => {
     const getNotes = () => {
         axiosInstance
             .get("/note/get/all", { params: { userId: currentUserId } })
-            .then((response: AxiosResponse<APIResponse<Video[]>>) => {
+            .then((response: AxiosResponse<APIResponse<Note[]>>) => {
                 setNoteList(response.data.data);
             });
+        console.log("debug: noteList", noteList);
     };
+    const getVideos=()=>{
+        axiosInstance
+        .get("/video/get/by/userId",{params:{userId:currentUserId}})
+        .then((response:AxiosResponse<APIResponse<Video[]>>)=>{
+            setVideoList(response.data.data);
+        });
+    }
 
     const handleChange = (_event: React.SyntheticEvent, newTabPage: string) => {
         setTabPage(newTabPage);
@@ -102,7 +114,7 @@ export const UserPage = () => {
                                         aria-label="lab API tabs example"
                                     >
                                         <Tab label="Notes" value="1" />
-                                        {/* <Tab label="Videos" value="2" /> */}
+                                        <Tab label="Videos" value="2" />
                                         {/* <Tab label="Posts" value="3" /> */}
                                         {/* {isCurrentUser && ( */}
                                         {/* <Tab
@@ -112,13 +124,14 @@ export const UserPage = () => {
 										)} */}
                                         {isCurrentUser && (
                                             <Tab
-                                                label="Note bookmarks"
+                                                label="Bookmarks"
                                                 value="5"
                                             />
                                         )}
                                     </TabList>
                                 </Box>
                                 <UserNotesTab noteList={noteList} />
+                                <UserVideoTab videos={videoList} />
                                 {/* <TabPanel value="2">Item Two</TabPanel> */}
                                 {/* <TabPanel value="3">Item Three</TabPanel> */}
                                 {/* <TabPanel value="4">settings</TabPanel> */}

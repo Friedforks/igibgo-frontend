@@ -161,10 +161,6 @@ export const VideoUploadDialog = ({
             // no video file
             sweetAlert("Error", "Video file is not selected", "error");
         }
-        if (!(videoFile?.type == "video/mp4")) {
-            // wrong file format
-            sweetAlert("Error", "Please upload a video in mp4 format", "error");
-        }
         if (!blobs || blobs.length === 0) {
             // no snapshots
             sweetAlert(

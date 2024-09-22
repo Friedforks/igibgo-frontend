@@ -1,15 +1,28 @@
-import {CloudUpload, Search} from "@mui/icons-material";
-import {Stack, Button, Grid, TextField, IconButton} from "@mui/material";
-import React, {useEffect, useRef, useState} from "react";
-import {VideoUploadDialog} from "../components/UtilComponents/VideoUploadDialog.tsx";
+import {
+    ArrowBackIos,
+    ArrowForwardIos,
+    CloudUpload,
+    Search,
+} from "@mui/icons-material";
+import {
+    Stack,
+    Button,
+    Grid,
+    TextField,
+    IconButton,
+    Typography,
+} from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { VideoUploadDialog } from "../components/UtilComponents/VideoUploadDialog.tsx";
 import axiosInstance from "../utils/AxiosInstance";
-import {Video} from "../entity/Video";
+import { Video } from "../entity/Video";
 import ResponseCodes from "../entity/ResponseCodes";
-import {VideoCard} from "../components/Video/VideoCard";
-import {Page} from "../entity/Page.ts";
-import {AxiosResponse} from "axios";
+import { VideoCard } from "../components/Video/VideoCard";
+import { Page } from "../entity/Page.ts";
+import { AxiosResponse } from "axios";
 import APIResponse from "../entity/APIResponse.ts";
-import {useNavigate, useParams} from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { VideoGrid } from "../components/Video/VideoGrid.tsx";
 
 export const VideoPage = () => {
     const [videoUploadDialogOpen, setVideoUploadDialogOpen] =
@@ -19,31 +32,32 @@ export const VideoPage = () => {
     // videos is a list of videos so that it can be appended to the existing list
     const [videos, setVideos] = useState<Video[]>([]);
     // videosPaged is a paged list of videos so that it can be used to get the next page
-    const [videosPaged, setVideosPaged] = useState<Page<Video[]>>();
     const params = useParams();
     // video query title is the title of the video that is being searched for
     const videoQueryTitle = params.title;
-    const navigate=useNavigate();
+    const [totalPages, setTotalPages] = useState<number>(0);
+    const navigate = useNavigate();
+    const pageSize = 10;
 
     const getSuggestedVideos = async () => {
         axiosInstance
             .get("/video/get/order", {
                 params: {
                     page: page,
-                    size: 10,
+                    size: pageSize,
                     orderBy: "likeCount",
                     ascending: false,
                 },
             })
             .then((resp: AxiosResponse<APIResponse<Page<Video[]>>>) => {
                 if (resp.data.code == ResponseCodes.SUCCESS) {
-                    setVideosPaged(resp.data.data);
-                    setVideos([...videos, ...resp.data.data.content]);
+                    setVideos(resp.data.data.content);
+                    setTotalPages(resp.data.data.totalPages);
                     console.log(resp);
                 } else {
                     console.log(
                         "Error in get suggested videos request: " +
-                        resp.data.message
+                            resp.data.message
                     );
                 }
             })
@@ -58,24 +72,25 @@ export const VideoPage = () => {
                 params: {
                     videoTitle: videoQueryTitle,
                     page: page,
-                    size: 10
+                    size: pageSize,
                 },
             })
             .then((resp: AxiosResponse<APIResponse<Page<Video[]>>>) => {
                 if (resp.data.code == ResponseCodes.SUCCESS) {
-                    setVideosPaged(resp.data.data);
-                    setVideos([...videos, ...resp.data.data.content]);
+                    setVideos(resp.data.data.content);
+                    setTotalPages(resp.data.data.totalPages);
                     console.log(resp);
                 } else {
                     console.log(
-                        "Error in get videos by title request: " + resp.data.message
+                        "Error in get videos by title request: " +
+                            resp.data.message
                     );
                 }
             })
             .catch((error) => {
                 console.log("Error in get videos by title request: " + error);
             });
-    }
+    };
 
     const submitVideoTitleSearch = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -89,48 +104,24 @@ export const VideoPage = () => {
 
     useEffect(() => {
         if (videoQueryTitle) {
-            getVideosByTitle()
+            getVideosByTitle();
         } else {
             getSuggestedVideos();
         }
     }, [page]);
 
-    const containerRef = useRef<HTMLDivElement>(null);
-
-    useEffect(() => {
-
-        // Function to handle scroll event
-        const handleScroll = () => {
-            if (!containerRef.current) return;
-            // console.log("scrollTop+clientHeight: ", containerRef.current.scrollTop + containerRef.current.clientHeight);
-            // console.log("scrollHeight: ", containerRef.current.scrollHeight);
-            if (containerRef.current) {
-                const {scrollTop, scrollHeight, clientHeight} = containerRef.current;
-                // If the user has scrolled to the bottom of the container
-                if (scrollTop + clientHeight >= scrollHeight && !videosPaged?.last) {
-                    setPage(page + 1);
-                }
-            }
-        };
-
-        // Add scroll event listener to the container
-        const container = containerRef.current;
-        if (container) {
-            container.addEventListener('scroll', handleScroll);
-            return () => {
-                container.removeEventListener('scroll', handleScroll);
-            };
-        }
-    }, []);
-
     return (
         <>
-            <div ref={containerRef} style={{height: '80vh', overflowY: 'auto'}}>
+            <div style={{ height: "80vh", overflowY: "auto" }}>
                 {/* Header row */}
-                <Stack direction="row" spacing={2} sx={{mb: "2rem", ml: "2rem"}}>
+                <Stack
+                    direction="row"
+                    spacing={2}
+                    sx={{ mb: "2rem", ml: "2rem" }}
+                >
                     <Button
                         variant="contained"
-                        startIcon={<CloudUpload/>}
+                        startIcon={<CloudUpload />}
                         onClick={() => {
                             setVideoUploadDialogOpen(true);
                         }}
@@ -138,36 +129,60 @@ export const VideoPage = () => {
                         Video Upload
                     </Button>
                     {/* Search bar */}
-                    <form style={{ width: "40%" }} onSubmit={submitVideoTitleSearch}>
+                    <form
+                        style={{ width: "40%" }}
+                        onSubmit={submitVideoTitleSearch}
+                    >
                         <TextField
                             name="title"
                             placeholder="Click here to search"
                             InputProps={{
                                 endAdornment: (
-                                    <IconButton type="submit" >
+                                    <IconButton type="submit">
                                         <Search />
                                     </IconButton>
-                                )
+                                ),
                             }}
                             fullWidth
                         />
                     </form>
                 </Stack>
+                {/* flip page button */}
                 <Grid
                     container
-                    spacing={{xs: 2, md: 2}}
-                    style={{
-                        paddingLeft: "2rem",
-                        paddingRight: "2rem",
-                        maxWidth: "100%",
-                    }}
+                    direction="row"
+                    justifyContent="flex-end"
+                    alignItems="flex-end"
                 >
-                    {videos.map((item, index) => (
-                        <Grid item xs md={3} key={index}>
-                            <VideoCard video={item}/>
-                        </Grid>
-                    ))}
+                    <Grid item>
+                        <IconButton
+                            aria-label="delete"
+                            size="small"
+                            onClick={() => {
+                                page > 0 ? setPage(page - 1) : setPage(0);
+                            }}
+                            disabled={page == 0}
+                        >
+                            <ArrowBackIos fontSize="inherit" />
+                        </IconButton>
+                    </Grid>
+                    <Grid item>
+                        <Typography>{page + 1}</Typography>
+                    </Grid>
+                    <Grid item>
+                        <IconButton
+                            aria-label="delete"
+                            size="small"
+                            onClick={() => {
+                                setPage(page + 1);
+                            }}
+                            disabled={page == totalPages - 1}
+                        >
+                            <ArrowForwardIos fontSize="inherit" />
+                        </IconButton>
+                    </Grid>
                 </Grid>
+                <VideoGrid videos={videos} />
 
                 {/* Dialogs */}
                 <VideoUploadDialog

@@ -5,24 +5,24 @@ import {
     CardContent,
     CardMedia,
     Stack,
-    Typography
+    Typography,
 } from "@mui/material";
-import {Video} from "../../entity/Video.ts";
+import { Video } from "../../entity/Video.ts";
 import { useNavigate } from "react-router-dom";
 
 // later to pass prop. Now only placeholder so no need.
 type VideoCardProps = {
-    video:Video
-}
+    video: Video;
+};
 
-export const VideoCard = ({video}:VideoCardProps) => {
-    const navigate=useNavigate();
+export const VideoCard = ({ video }: VideoCardProps) => {
+    const navigate = useNavigate();
     const handleVideoCardClick = () => {
         navigate(`/video/open/${video.videoId}`);
-    }
+    };
     return (
         <>
-            <Card sx={{width: '100%',maxWidth: "20rem"}}>
+            <Card sx={{ width: "100%", maxWidth: "20rem", maxHeight: "16rem" }}>
                 <CardActionArea onClick={handleVideoCardClick}>
                     <CardMedia
                         component="img"
@@ -32,14 +32,26 @@ export const VideoCard = ({video}:VideoCardProps) => {
                     />
                     <CardContent>
                         <Stack direction="row" spacing={2}>
-                            <Avatar
-                                src={video.author.avatarUrl}
-                            ></Avatar>
+                            <Avatar src={video.author.avatarUrl}></Avatar>
                             <div>
-                                <Typography gutterBottom variant="subtitle1" component="div">
+                                <Typography
+                                    gutterBottom
+                                    variant="subtitle1"
+                                    component="div"
+                                    sx={{
+                                        display: "-webkit-box",
+                                        WebkitBoxOrient: "vertical",
+                                        overflow: "hidden",
+                                        WebkitLineClamp: 2,
+                                        textOverflow: "ellipsis",
+                                    }}
+                                >
                                     {video.title}
                                 </Typography>
-                                <Typography variant="body2" color="text.secondary">
+                                <Typography
+                                    variant="body2"
+                                    color="text.secondary"
+                                >
                                     {video.author.username}
                                 </Typography>
                             </div>
@@ -48,5 +60,5 @@ export const VideoCard = ({video}:VideoCardProps) => {
                 </CardActionArea>
             </Card>
         </>
-    )
-}
+    );
+};

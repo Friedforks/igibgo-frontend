@@ -29,7 +29,7 @@ import {
 import React, {useEffect, useState} from "react";
 import axiosInstance from "../utils/AxiosInstance";
 import APIResponse from "../entity/APIResponse";
-import {Video} from "../entity/Note";
+import {Note} from "../entity/Note";
 import {ShortUserInfoDisplay} from "../components/UtilComponents/ShortUserInfoDisplay.tsx";
 import {FUser} from "../entity/FUser";
 import sweetAlert from "sweetalert";
@@ -40,7 +40,7 @@ import {NoteReply} from "../entity/NoteReply";
 import {useNavigate, useParams} from "react-router-dom";
 
 export const NoteOpenPage = () => {
-	const [currentNote, setCurrentNote] = useState<Video>();
+	const [currentNote, setCurrentNote] = useState<Note>();
 	const [loading, setLoading] = useState(true);
 	const [height, setHeight] = useState(window.innerHeight);
 	const [totalReply, setTotalReply] = useState<number>(0);
@@ -67,7 +67,7 @@ export const NoteOpenPage = () => {
 					userId: userId,
 				},
 			})
-			.then((response: AxiosResponse<APIResponse<Video>>) => {
+			.then((response: AxiosResponse<APIResponse<Note>>) => {
 				const responseData = response.data.data;
 				const date = new Date(responseData.uploadDate);
 				responseData.uploadDate = date.toLocaleDateString("zh-Hans-CN") +

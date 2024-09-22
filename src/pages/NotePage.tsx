@@ -4,7 +4,7 @@ import { AxiosResponse } from "axios";
 import APIResponse from "../entity/APIResponse.ts";
 import ResponseCodes from "../entity/ResponseCodes.ts";
 import sweetAlert from "sweetalert";
-import { Video } from "../entity/Note.ts";
+import { Note } from "../entity/Note.ts";
 import {
 	Box,
 	Breadcrumbs,
@@ -39,7 +39,7 @@ import { useNavigate } from "react-router-dom";
 import { NoteList } from "../components/Note/NoteList.tsx";
 
 export const NotePage = () => {
-	const [noteList, setNoteList] = useState<Video[]>([]);
+	const [noteList, setNoteList] = useState<Note[]>([]);
 	const pageSize: number = 10; // fixed page size for pagination
 	const [page, setPage] = useState<number>(0);
 	const [sortBy, setSortBy] = useState<string>("uploadDate");

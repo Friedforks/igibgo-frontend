@@ -1,10 +1,10 @@
 import { TabPanel } from "@mui/lab";
-import { Video } from "../../entity/Note";
+import { Note } from "../../entity/Note";
 import { useNavigate } from "react-router-dom";
 import { NoteList } from "../Note/NoteList";
 
 type UserNotesTabProps = {
-	noteList: Video[];
+	noteList: Note[];
 };
 export const UserNotesTab = ({ noteList }: UserNotesTabProps) => {
 	const navigate = useNavigate();

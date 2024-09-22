@@ -7,14 +7,14 @@
  *     public Note note;// fk
  *     public String tagText;
  */
-import {Video} from "./Note.ts";
+import {Note} from "./Note.ts";
 
 export class NoteTag {
     noteTagId: number;
-    note: Video;
+    note: Note;
     tagText: string;
 
-    constructor(noteTagId: number, note: Video, tagText: string) {
+    constructor(noteTagId: number, note: Note, tagText: string) {
         this.noteTagId = noteTagId;
         this.note = note;
         this.tagText = tagText;

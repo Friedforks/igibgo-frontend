@@ -196,7 +196,7 @@ const CustomHeader1: React.FC<CustomHeader1Props> = ({ children: content }) => {
         {
             text: "Forum",
             icon: <Forum />,
-            location: "/forum",
+            location: "/forum/search",
         },
     ];
 

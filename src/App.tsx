@@ -7,6 +7,8 @@ import { UserPage } from "./pages/UserPage.tsx";
 import { VideoPage } from "./pages/VideoPage.tsx";
 import CustomHeader1 from "./components/HomePage/CustomHeader1.tsx";
 import { VideoOpenPage } from "./pages/VideoOpenPage.tsx";
+import { ForumPage } from "./pages/ForumPage.tsx";
+import { PostEditPage } from "./pages/PostEditPage.tsx";
 
 function App() {
     const router = createBrowserRouter([
@@ -42,6 +44,18 @@ function App() {
             path: "/user/:userId",
             element: <UserPage />,
         },
+        {
+            path: "/forum/search",
+            element:<ForumPage/>
+        },
+        {
+            path: "/forum/search/:title",
+            element:<ForumPage/>
+        },
+        {
+            path: "/forum/new",
+            element:<PostEditPage/>
+        }
     ]);
     return (
         <>

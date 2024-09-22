@@ -12,17 +12,17 @@
  *     @JoinColumn(name = "author")
  *     public FUser author;
  */
-import {Video} from "./Note.ts";
+import {Note} from "./Note.ts";
 import {FUser} from "./FUser.ts";
 
 export class NoteReply{
     noteReplyId:number;
-    note:Video;
+    note:Note;
     replyContent:string;
     replyDate:Date;
     author:FUser;
 
-    constructor(noteReplyId: number, note: Video, replyContent: string, replyDate: Date, author: FUser) {
+    constructor(noteReplyId: number, note: Note, replyContent: string, replyDate: Date, author: FUser) {
         this.noteReplyId = noteReplyId;
         this.note = note;
         this.replyContent = replyContent;

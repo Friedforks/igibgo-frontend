@@ -1,5 +1,5 @@
 import { Bookmark } from "./Bookmark";
-import { Video } from "./Note";
+import { Video } from "./Video";
 
 export class VideoBookmark {
     videoBookmarkId: string;
