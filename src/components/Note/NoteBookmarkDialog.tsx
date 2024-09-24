@@ -30,11 +30,7 @@ type NoteBookmarkDialogProps = {
 export const NoteBookmarkDialog = ({
                                        open,
                                        setOpen,
-                                       currentNoteId,
-                                       setStarred,
-                                       dataUpdateRequired,
-                                       setDataUpdateRequired
-                                   }: NoteBookmarkDialogProps) => {
+                                       currentNoteId                                   }: NoteBookmarkDialogProps) => {
     const [bookmarked, setBookmarked] = useState<NoteBookmark[]>([]);
     const [availableBookmarks, setAvailableBookmarks] = useState<Bookmark[]>(
         []

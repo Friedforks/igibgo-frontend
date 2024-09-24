@@ -1,0 +1,14 @@
+version: '3'
+services:
+  igibgo-frontend:
+    image: registry.cn-hangzhou.aliyuncs.com/friedforks/igibgo-frontend:v1
+    container_name: igibgo-frontend
+    ports:
+      - "9000:80"
+    restart: always
+    networks:
+      - igibgo_network
+
+networks:
+  igibgo_network:
+    external: true

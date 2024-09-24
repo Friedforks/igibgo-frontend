@@ -17,7 +17,6 @@ import { VideoUploadDialog } from "../components/UtilComponents/VideoUploadDialo
 import axiosInstance from "../utils/AxiosInstance";
 import { Video } from "../entity/Video";
 import ResponseCodes from "../entity/ResponseCodes";
-import { VideoCard } from "../components/Video/VideoCard";
 import { Page } from "../entity/Page.ts";
 import { AxiosResponse } from "axios";
 import APIResponse from "../entity/APIResponse.ts";
