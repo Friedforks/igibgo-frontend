@@ -215,9 +215,11 @@ const CustomHeader1: React.FC<CustomHeader1Props> = ({ children: content }) => {
             <LoginDialog
                 loginDialogOpen={loginDialogOpen}
                 setLoginDialogOpen={setLoginDialogOpen}
+                setRegisterDialog1Open={setRegisterDialog1Open}
             />
 
             <RegisterDialog1
+                setLoginDialogOpen={setLoginDialogOpen}
                 registerDialog1Open={registerDialog1Open}
                 setRegisterDialog1Open={setRegisterDialog1Open}
                 backdropOpen={backdropOpen}

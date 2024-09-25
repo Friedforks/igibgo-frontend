@@ -63,7 +63,7 @@ export const UserBookmarkTab = ({ userId }: UserBookmarkTabProps) => {
         navigate(`/note/open/${noteId}`);
     };
     return (
-        <TabPanel id="5" value="5" sx={{ padding: 0 }}>
+        <TabPanel id="4" value="4" sx={{ padding: 0 }}>
             {bookmarks ? (
                 <div>
                     {bookmarks.map((bookmark: Bookmark, index: number) => (

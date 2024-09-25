@@ -22,11 +22,11 @@ export const VideoCard = ({ video }: VideoCardProps) => {
     };
     return (
         <>
-            <Card sx={{ width: "100%", maxWidth: "20rem", maxHeight: "16rem" }}>
+            <Card sx={{ width: "100%", maxWidth: "20rem" }}>
                 <CardActionArea onClick={handleVideoCardClick}>
                     <CardMedia
                         component="img"
-                        height="100%"
+                        sx={{ height: "10rem" }}
                         image={video.videoCoverUrl}
                         alt="video cover"
                     />

@@ -7,6 +7,8 @@ import ResponseCodes from "../entity/ResponseCodes";
 import { Video } from "../entity/Video";
 import {
     Avatar,
+    Box,
+    Button,
     Chip,
     Divider,
     Grid,
@@ -18,7 +20,7 @@ import {
     Paper,
     Stack,
     TextField,
-    Typography
+    Typography,
 } from "@mui/material";
 import {
     Delete,
@@ -28,7 +30,7 @@ import {
     StarBorderOutlined,
     ThumbUp,
     ThumbUpOutlined,
-    VisibilityOutlined
+    VisibilityOutlined,
 } from "@mui/icons-material";
 import { formatDate } from "../utils/DateUtil";
 import { ShortUserInfoDisplay } from "../components/UtilComponents/ShortUserInfoDisplay";
@@ -48,8 +50,8 @@ export const VideoOpenPage = () => {
             .get("/video/get/videoId", {
                 params: {
                     videoId: videoId,
-                    userId: getUserInfo().userId
-                }
+                    userId: getUserInfo().userId,
+                },
             })
             .then((resp: AxiosResponse<APIResponse<Video>>) => {
                 if (resp.data.code == ResponseCodes.SUCCESS) {
@@ -61,7 +63,7 @@ export const VideoOpenPage = () => {
                 } else {
                     console.log(
                         "Error in get video by video id request: " +
-                        resp.data.message
+                            resp.data.message
                     );
                 }
             })
@@ -70,32 +72,42 @@ export const VideoOpenPage = () => {
             });
     };
     const getLikeStatus = async () => {
-        axiosInstance.get("/video/is/liked", {
-            params: {
-                videoId: videoId,
-                userId: getUserInfo().userId
-            }
-        }).then((resp: AxiosResponse<APIResponse<boolean>>) => {
-            if (resp.data.code == ResponseCodes.SUCCESS) {
-                setIsLiked(resp.data.data);
-            } else {
-                console.log("Error in get like status request: " + resp.data.message);
-            }
-        });
+        axiosInstance
+            .get("/video/is/liked", {
+                params: {
+                    videoId: videoId,
+                    userId: getUserInfo().userId,
+                },
+            })
+            .then((resp: AxiosResponse<APIResponse<boolean>>) => {
+                if (resp.data.code == ResponseCodes.SUCCESS) {
+                    setIsLiked(resp.data.data);
+                } else {
+                    console.log(
+                        "Error in get like status request: " + resp.data.message
+                    );
+                }
+            });
     };
 
-    const getSaveStatus=async ()=>{
-        axiosInstance.get('/video/is/saved',{
-        params:{
-            videoId:videoId,
-            userId: getUserInfo().userId,
-        }}).then((resp:AxiosResponse<APIResponse<boolean>>)=>{
-            if(resp.data.code==ResponseCodes.SUCCESS){setStarred(resp.data.data);}
-            else{
-                console.log("Error in get save status request: "+resp.data.message);
-            }
-        })
-    }
+    const getSaveStatus = async () => {
+        axiosInstance
+            .get("/video/is/saved", {
+                params: {
+                    videoId: videoId,
+                    userId: getUserInfo().userId,
+                },
+            })
+            .then((resp: AxiosResponse<APIResponse<boolean>>) => {
+                if (resp.data.code == ResponseCodes.SUCCESS) {
+                    setStarred(resp.data.data);
+                } else {
+                    console.log(
+                        "Error in get save status request: " + resp.data.message
+                    );
+                }
+            });
+    };
     useEffect(() => {
         getLikeStatus();
         getSaveStatus();
@@ -125,8 +137,8 @@ export const VideoOpenPage = () => {
                         params: {
                             videoId: videoId,
                             replyContent: commentAreaValue,
-                            authorId: getUserInfo().userId
-                        }
+                            authorId: getUserInfo().userId,
+                        },
                     })
                     .then((resp: AxiosResponse<APIResponse<VideoReply>>) => {
                         if (resp.data.code == ResponseCodes.SUCCESS) {
@@ -135,7 +147,7 @@ export const VideoOpenPage = () => {
                         } else {
                             console.log(
                                 "Error in submit comment request: " +
-                                resp.data.message
+                                    resp.data.message
                             );
                         }
                     })
@@ -156,32 +168,36 @@ export const VideoOpenPage = () => {
     };
 
     const likeVideo = () => {
-        axiosInstance.post("/video/like/videoId", 0, {
-            params: {
-                videoId: videoId,
-                userId: getUserInfo().userId
-            }
-        }).then((resp: AxiosResponse<APIResponse<void>>) => {
-            if (resp.data.code == ResponseCodes.SUCCESS) {
-                setUserInfoDisplayUpdateFlag(!userInfoDisplayUpdateFlag);
-                getVideoByVideoId();
-            }
-        });
+        axiosInstance
+            .post("/video/like/videoId", 0, {
+                params: {
+                    videoId: videoId,
+                    userId: getUserInfo().userId,
+                },
+            })
+            .then((resp: AxiosResponse<APIResponse<void>>) => {
+                if (resp.data.code == ResponseCodes.SUCCESS) {
+                    setUserInfoDisplayUpdateFlag(!userInfoDisplayUpdateFlag);
+                    getVideoByVideoId();
+                }
+            });
         setIsLiked(true);
     };
 
     const unlikeVideo = () => {
-        axiosInstance.post("/video/unlike/videoId", 0, {
-            params: {
-                videoId: videoId,
-                userId: getUserInfo().userId
-            }
-        }).then((resp: AxiosResponse<APIResponse<void>>) => {
-            if (resp.data.code == ResponseCodes.SUCCESS) {
-                setUserInfoDisplayUpdateFlag(!userInfoDisplayUpdateFlag);
-                getVideoByVideoId();
-            }
-        });
+        axiosInstance
+            .post("/video/unlike/videoId", 0, {
+                params: {
+                    videoId: videoId,
+                    userId: getUserInfo().userId,
+                },
+            })
+            .then((resp: AxiosResponse<APIResponse<void>>) => {
+                if (resp.data.code == ResponseCodes.SUCCESS) {
+                    setUserInfoDisplayUpdateFlag(!userInfoDisplayUpdateFlag);
+                    getVideoByVideoId();
+                }
+            });
         setIsLiked(false);
     };
 
@@ -190,8 +206,8 @@ export const VideoOpenPage = () => {
             .delete("/video/delete/reply", {
                 params: {
                     replyId: videoReplyId,
-                    authorId: getUserInfo().userId
-                }
+                    authorId: getUserInfo().userId,
+                },
             })
             .then((resp: AxiosResponse<APIResponse<void>>) => {
                 if (resp.data.code == ResponseCodes.SUCCESS) {
@@ -207,8 +223,36 @@ export const VideoOpenPage = () => {
             });
     };
 
-    const [bookmarkDialogOpen, setBookmarkDialogOpen] = useState<boolean>(false);
-    const [dataUpdateRequired, setDataUpdateRequired] = useState<boolean>(false);
+    const handleVideoDeleteClick = () => {
+        axiosInstance
+            .delete("/video/delete", {
+                params: {
+                    token: localStorage.getItem("token"),
+                    videoId: videoId,
+                },
+            })
+            .then((resp: AxiosResponse<APIResponse<void>>) => {
+                if (resp.data.code == ResponseCodes.SUCCESS) {
+                    sweetAlert(
+                        "Success",
+                        "Video deleted successfully",
+                        "success"
+                    ).then(() => {
+                        navigate("/video/search");
+                    });
+                } else {
+                    sweetAlert("Error", resp.data.message, "error");
+                }
+            })
+            .catch((error) => {
+                console.log("Error in delete video request: " + error);
+            });
+    };
+
+    const [bookmarkDialogOpen, setBookmarkDialogOpen] =
+        useState<boolean>(false);
+    const [dataUpdateRequired, setDataUpdateRequired] =
+        useState<boolean>(false);
 
     return (
         <>
@@ -220,7 +264,10 @@ export const VideoOpenPage = () => {
                 sx={{ padding: "1rem" }}
             >
                 {/* Search bar */}
-                <form style={{ width: "40%" }} onSubmit={submitVideoTitleSearch}>
+                <form
+                    style={{ width: "40%" }}
+                    onSubmit={submitVideoTitleSearch}
+                >
                     <TextField
                         name="title"
                         placeholder="Click here to search"
@@ -229,7 +276,7 @@ export const VideoOpenPage = () => {
                                 <IconButton type="submit">
                                     <Search />
                                 </IconButton>
-                            )
+                            ),
                         }}
                         fullWidth
                     />
@@ -265,12 +312,32 @@ export const VideoOpenPage = () => {
                                     {video &&
                                         video.tags.map((tag) => (
                                             <Grid item key={tag.videoTagId}>
-                                                <Chip label={tag.tagText}></Chip>
+                                                <Chip
+                                                    label={tag.tagText}
+                                                ></Chip>
                                             </Grid>
                                         ))}
                                 </Grid>
                             </div>
                         </Paper>
+                        {/* Delete button (only for video author) */}
+                        {video?.author.userId === getUserInfo().userId && (
+                            <Box
+                                sx={{
+                                    display: "flex",
+                                    justifyContent: "flex-end",
+                                    marginTop: "1.5rem",
+                                }}
+                            >
+                                <Button
+                                    variant="outlined"
+                                    startIcon={<Delete />}
+                                    onClick={handleVideoDeleteClick}
+                                >
+                                    Delete
+                                </Button>
+                            </Box>
+                        )}
                         {/* Comments */}
                         <Divider textAlign="left" style={{ marginTop: "1rem" }}>
                             <Chip label="Comments" size="small" />
@@ -299,7 +366,7 @@ export const VideoOpenPage = () => {
                                             <IconButton type="submit">
                                                 <Send />
                                             </IconButton>
-                                        )
+                                        ),
                                     }}
                                 ></TextField>
                             </form>
@@ -308,60 +375,65 @@ export const VideoOpenPage = () => {
                         <List>
                             {video
                                 ? video.replies.map((reply: VideoReply) => (
-                                    <ListItem
-                                        alignItems="flex-start"
-                                        key={reply.videoReplyId}
-                                        secondaryAction={
-                                            reply.author.userId ===
-                                            getUserInfo().userId && (
-                                                <IconButton
-                                                    onClick={() =>
-                                                        deleteReply(
-                                                            reply.videoReplyId
-                                                        )
-                                                    }
-                                                >
-                                                    <Delete />
-                                                </IconButton>
-                                            )
-                                        }
-                                    >
-                                        <ListItemAvatar
-                                            onClick={() => {
-                                                navigate(
-                                                    "/user/" + reply.author.userId
-                                                );
-                                            }}
-                                        >
-                                            <Avatar
-                                                src={reply.author.avatarUrl}
-                                                alt={reply.author.username}
-                                            />
-                                        </ListItemAvatar>
-                                        <ListItemText
-                                            primary={reply.author.username}
-                                            secondary={
-                                                <React.Fragment>
-                                                    <Typography
-                                                        sx={{ display: "inline" }}
-                                                        component="span"
-                                                        variant="body2"
-                                                        color="text.primary"
-                                                    >
-                                                      <span
-                                                          style={{
-                                                              wordWrap:
-                                                                  "break-word"
+                                      <ListItem
+                                          alignItems="flex-start"
+                                          key={reply.videoReplyId}
+                                          secondaryAction={
+                                              reply.author.userId ===
+                                                  getUserInfo().userId && (
+                                                  <IconButton
+                                                      onClick={() =>
+                                                          deleteReply(
+                                                              reply.videoReplyId
+                                                          )
+                                                      }
+                                                  >
+                                                      <Delete />
+                                                  </IconButton>
+                                              )
+                                          }
+                                      >
+                                          <ListItemAvatar
+                                              onClick={() => {
+                                                  navigate(
+                                                      "/user/" +
+                                                          reply.author.userId
+                                                  );
+                                              }}
+                                          >
+                                              <Avatar
+                                                  src={reply.author.avatarUrl}
+                                                  alt={reply.author.username}
+                                              />
+                                          </ListItemAvatar>
+                                          <ListItemText
+                                              primary={reply.author.username}
+                                              secondary={
+                                                  <React.Fragment>
+                                                      <Typography
+                                                          sx={{
+                                                              display: "inline",
                                                           }}
+                                                          component="span"
+                                                          variant="body2"
+                                                          color="text.primary"
                                                       >
-                                                          {reply.replyContent}
-                                                      </span>
-                                                    </Typography>
-                                                </React.Fragment>
-                                            }
-                                        ></ListItemText>
-                                    </ListItem>
-                                ))
+                                                          <span
+                                                              style={{
+                                                                  wordWrap:
+                                                                      "break-word",
+                                                              }}
+                                                          >
+                                                              {
+                                                                  reply.replyContent
+                                                              }
+                                                          </span>
+                                                      </Typography>
+                                                  </React.Fragment>
+                                              }
+                                          ></ListItemText>
+                                      </ListItem>
+                                  ))
                                 : ""}
                         </List>
                     </Grid>
@@ -418,10 +490,13 @@ export const VideoOpenPage = () => {
                     </Grid>
                 </Grid>
             </Grid>
-            <VideoBookmarkDialog open={bookmarkDialogOpen}
-                                 setOpen={setBookmarkDialogOpen} currentVideoId={videoId || ""}
-                                 dataUpdateRequired={dataUpdateRequired}
-                                 setDataUpdateRequired={setDataUpdateRequired} />
+            <VideoBookmarkDialog
+                open={bookmarkDialogOpen}
+                setOpen={setBookmarkDialogOpen}
+                currentVideoId={videoId || ""}
+                dataUpdateRequired={dataUpdateRequired}
+                setDataUpdateRequired={setDataUpdateRequired}
+            />
         </>
     );
 };

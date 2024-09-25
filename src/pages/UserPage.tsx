@@ -12,6 +12,7 @@ import { UserNotesTab } from "../components/UserPage/UserNotesTab";
 import { UserBookmarkTab } from "../components/UserPage/UserBookmarkTab";
 import { UserVideoTab } from "../components/UserPage/UserVideosTab.tsx";
 import { Video } from "../entity/Video.ts";
+import { UserSettingsTab } from "../components/UserPage/UserSettingsTab.tsx";
 
 export const UserPage = () => {
     const params = useParams();
@@ -23,7 +24,7 @@ export const UserPage = () => {
     const [user, setUser] = useState<FUser>();
     const [tabPage, setTabPage] = useState<string>("1");
     const [noteList, setNoteList] = useState<Note[]>([]);
-    const [videoList,setVideoList]=useState<Video[]>([]);
+    const [videoList, setVideoList] = useState<Video[]>([]);
     useEffect(() => {
         // console.log("debug: currentUserId", currentUserId);
         // console.log("debug: isCurrentUser", isCurrentUser);
@@ -64,13 +65,13 @@ export const UserPage = () => {
             });
         console.log("debug: noteList", noteList);
     };
-    const getVideos=()=>{
+    const getVideos = () => {
         axiosInstance
-        .get("/video/get/by/userId",{params:{userId:currentUserId}})
-        .then((response:AxiosResponse<APIResponse<Video[]>>)=>{
-            setVideoList(response.data.data);
-        });
-    }
+            .get("/video/get/by/userId", { params: { userId: currentUserId } })
+            .then((response: AxiosResponse<APIResponse<Video[]>>) => {
+                setVideoList(response.data.data);
+            });
+    };
 
     const handleChange = (_event: React.SyntheticEvent, newTabPage: string) => {
         setTabPage(newTabPage);
@@ -116,15 +117,12 @@ export const UserPage = () => {
                                         <Tab label="Notes" value="1" />
                                         <Tab label="Videos" value="2" />
                                         {/* <Tab label="Posts" value="3" /> */}
-                                        {/* {isCurrentUser && ( */}
-                                        {/* <Tab
-												label="User settings"
-												value="4"
-											/>
-										)} */}
+                                        {isCurrentUser && (
+                                            <Tab label="Bookmarks" value="4" />
+                                        )}
                                         {isCurrentUser && (
                                             <Tab
-                                                label="Bookmarks"
+                                                label="User settings"
                                                 value="5"
                                             />
                                         )}
@@ -134,8 +132,8 @@ export const UserPage = () => {
                                 <UserVideoTab videos={videoList} />
                                 {/* <TabPanel value="2">Item Two</TabPanel> */}
                                 {/* <TabPanel value="3">Item Three</TabPanel> */}
-                                {/* <TabPanel value="4">settings</TabPanel> */}
                                 <UserBookmarkTab userId={currentUserId} />
+                                <UserSettingsTab />
                             </TabContext>
                         </Box>
                     </Grid>

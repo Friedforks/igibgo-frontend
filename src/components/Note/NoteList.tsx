@@ -9,9 +9,19 @@ import {
     Divider,
     Typography,
     Chip,
+    IconButton,
 } from "@mui/material";
 import { Note } from "../../entity/Note";
-import { VisibilityOutlined, ThumbUpAltOutlined } from "@mui/icons-material";
+import {
+    VisibilityOutlined,
+    ThumbUpAltOutlined,
+    Delete,
+} from "@mui/icons-material";
+import { FUser } from "../../entity/FUser";
+import axiosInstance from "../../utils/AxiosInstance";
+import { AxiosResponse } from "axios";
+import APIResponse from "../../entity/APIResponse";
+import ResponseCodes from "../../entity/ResponseCodes";
 
 type NoteListProps = {
     noteList: Note[];
@@ -22,6 +32,35 @@ export const NoteList = ({
     noteList,
     handleNoteListItemClick,
 }: NoteListProps) => {
+    const userInfo = JSON.parse(
+        localStorage.getItem("userInfo") as string
+    ) as FUser;
+
+    const handleDeleteNote = (noteId: string) => {
+        axiosInstance
+            .delete("/note/delete", {
+                params: {
+                    token: localStorage.getItem("token"),
+                    noteId: noteId,
+                },
+            })
+            .then((response: AxiosResponse<APIResponse<void>>) => {
+                if (response.data.code == ResponseCodes.SUCCESS) {
+                    sweetAlert(
+                        "Success",
+                        "Note deleted successfully",
+                        "success"
+                    ).then(() => {
+                        window.location.reload();
+                    });
+                } else {
+                    sweetAlert("Error", response.data.message, "error");
+                }
+            })
+            .catch((error) => {
+                console.log("Error in deleting note", error);
+            });
+    };
     return (
         <>
             {noteList.length != 0 ? (
@@ -30,7 +69,7 @@ export const NoteList = ({
                         <>
                             <ListItem
                                 key={value.noteId}
-                                alignItems="flex-start"
+                                alignItems="center"
                                 disablePadding
                             >
                                 <ListItemButton
@@ -106,6 +145,14 @@ export const NoteList = ({
                                         ))}
                                     </Stack>
                                 </ListItemButton>
+                                {value.author.userId == userInfo.userId && (
+                                    <IconButton
+                                        children={<Delete />}
+                                        onClick={() => {
+                                            handleDeleteNote(value.noteId);
+                                        }}
+                                    />
+                                )}
                             </ListItem>
                             {/* <Divider component="li" /> */}
                         </>
