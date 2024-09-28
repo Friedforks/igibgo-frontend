@@ -1,5 +1,5 @@
 import {Video} from "./Video.ts";
-import {FUser} from "./FUser.ts";
+import {FUser} from "../FUser.ts";
 
 /** java
  *     @Id

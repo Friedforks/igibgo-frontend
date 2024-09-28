@@ -15,11 +15,11 @@ import {
 import React, { useEffect, useState } from "react";
 import { VideoUploadDialog } from "../components/UtilComponents/VideoUploadDialog.tsx";
 import axiosInstance from "../utils/AxiosInstance";
-import { Video } from "../entity/Video";
-import ResponseCodes from "../entity/ResponseCodes";
-import { Page } from "../entity/Page.ts";
+import { Video } from "../entity/Video/Video.ts";
+import ResponseCodes from "../entity/UtilEntity/ResponseCodes.ts";
+import { Page } from "../entity/UtilEntity/Page.ts";
 import { AxiosResponse } from "axios";
-import APIResponse from "../entity/APIResponse.ts";
+import APIResponse from "../entity/UtilEntity/APIResponse.ts";
 import { useNavigate, useParams } from "react-router-dom";
 import { VideoGrid } from "../components/Video/VideoGrid.tsx";
 

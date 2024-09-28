@@ -4,14 +4,14 @@ import { useEffect, useState } from "react";
 import { Box, Grid, Skeleton, Tab } from "@mui/material";
 import axiosInstance from "../utils/AxiosInstance";
 import { AxiosResponse } from "axios";
-import APIResponse from "../entity/APIResponse";
+import APIResponse from "../entity/UtilEntity/APIResponse.ts";
 import { ShortUserInfoDisplay } from "../components/UtilComponents/ShortUserInfoDisplay.tsx";
 import { TabContext, TabList } from "@mui/lab";
-import { Note } from "../entity/Note";
+import { Note } from "../entity/Note/Note.ts";
 import { UserNotesTab } from "../components/UserPage/UserNotesTab";
 import { UserBookmarkTab } from "../components/UserPage/UserBookmarkTab";
 import { UserVideoTab } from "../components/UserPage/UserVideosTab.tsx";
-import { Video } from "../entity/Video.ts";
+import { Video } from "../entity/Video/Video.ts";
 import { UserSettingsTab } from "../components/UserPage/UserSettingsTab.tsx";
 
 export const UserPage = () => {

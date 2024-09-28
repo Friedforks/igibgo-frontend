@@ -1,12 +1,14 @@
-import { Typography } from "@mui/material";
-import { useState, useEffect } from "react";
+import {Button, Stack, TextField, Typography} from "@mui/material";
+import React, {useState, useEffect} from "react";
 import Vditor from "vditor";
 import "vditor/dist/index.css";
-import { FUser } from "../entity/FUser";
-import axiosInstance from "../utils/AxiosInstance";
-import { AxiosResponse } from "axios";
-import APIResponse from "../entity/APIResponse";
-import ResponseCodes from "../entity/ResponseCodes";
+import {FUser} from "../entity/FUser.ts";
+import axiosInstance from "../utils/AxiosInstance.ts";
+import {AxiosResponse} from "axios";
+import APIResponse from "../entity/UtilEntity/APIResponse.ts";
+import ResponseCodes from "../entity/UtilEntity/ResponseCodes.ts";
+import {Send} from "@mui/icons-material";
+
 
 export const PostEditPage = () => {
     const placeHolderMd =
@@ -42,12 +44,9 @@ export const PostEditPage = () => {
             });
     };
     useEffect(() => {
-        // TODO: Implement upload image function
-        // const uploadImage=(file:File)=>{
-        //     axiosInstance.post
-        // }
         const vditor = new Vditor("vditor", {
-            height: window.innerHeight - 200,
+            height: window.innerHeight*0.7,
+            width: document.getElementById("post-form")?.clientWidth,
             counter: {
                 enable: true,
                 type: "markdown",
@@ -66,7 +65,7 @@ export const PostEditPage = () => {
             upload: {
                 accept: "image/*",
                 multiple: false,
-                headers: { token: localStorage.getItem("token") ?? "" },
+                headers: {token: localStorage.getItem("token") ?? ""},
                 filename(name) {
                     return name
                         .replace(/[^(a-zA-Z0-9\u4e00-\u9fa5\.)]/g, "")
@@ -87,10 +86,9 @@ export const PostEditPage = () => {
                     };
                     handleImageUpload(file[0], callback);
                     return null;
-                }
+                },
             },
             after: () => {
-                vditor.setValue("");
                 setVd(vditor);
             },
         });
@@ -100,10 +98,79 @@ export const PostEditPage = () => {
             setVd(undefined);
         };
     }, []);
+
+    const handlePostSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        const formData = new FormData(e.currentTarget);
+        const title = formData.get("title");
+        const tags = formData.get("tags");
+        if (!title || !tags) {
+            sweetAlert("Title and tags are required");
+            return;
+        }
+        if (!vd?.getValue()) {
+            sweetAlert("You need to at least write something in your post.");
+            return;
+        }
+        const newFormData = new FormData();
+        newFormData.append("postContent", vd?.getValue() as string);
+        axiosInstance
+            .post("/forum/upload", newFormData, {
+                params: {
+                    title: title,
+                    tags: tags,
+                    token: localStorage.getItem("token"),
+                },
+            })
+            .then((res: AxiosResponse<APIResponse<void>>) => {
+                if (res.data.code == ResponseCodes.SUCCESS) {
+                    sweetAlert(
+                        "Success!",
+                        "Post created successfully",
+                        "success"
+                    ).then(() => {
+                        window.location.reload();
+                    });
+                } else {
+                    sweetAlert("Error", res.data.message, "error");
+                }
+            })
+            .catch((err) => {
+                console.log("Error in uploading post", err);
+            });
+    };
+
     return (
         <>
-            <Typography variant="h4">Create post</Typography>
-            <div id="vditor" className="vditor" />
+            <form onSubmit={handlePostSubmit}>
+                <div style={{margin: "2rem"}}>
+                    <Typography variant="h4">Create post</Typography>
+                    <Stack
+                        direction="row"
+                        spacing={2}
+                        style={{marginTop: "1rem", marginBottom: "1rem"}}
+                        id="post-form"
+                    >
+                        <TextField
+                            id="outlined-basic"
+                            name="title"
+                            label="Title"
+                            required
+                            fullWidth
+                        />
+                        <TextField
+                            id="outlined-basic"
+                            name="tags"
+                            label="Tags (separate by comma ,)"
+                            fullWidth
+                        />
+                        <Button variant="contained" endIcon={<Send/>} type="submit" style={{width:'20%'}}>
+                            Send
+                        </Button>
+                    </Stack>
+                    <div id="vditor" className="vditor"/>
+                </div>
+            </form>
         </>
     );
 };

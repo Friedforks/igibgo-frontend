@@ -4,8 +4,8 @@ import { Avatar, Button, Grid, TextField, Typography } from "@mui/material";
 import { useState } from "react";
 import axiosInstance from "../../utils/AxiosInstance";
 import { AxiosResponse } from "axios";
-import APIResponse from "../../entity/APIResponse";
-import ResponseCodes from "../../entity/ResponseCodes";
+import APIResponse from "../../entity/UtilEntity/APIResponse.ts";
+import ResponseCodes from "../../entity/UtilEntity/ResponseCodes.ts";
 
 export const UserSettingsTab = () => {
     const [avatar, setAvatar] = useState<File>();

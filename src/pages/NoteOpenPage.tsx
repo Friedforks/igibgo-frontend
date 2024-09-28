@@ -28,15 +28,15 @@ import {
 } from "@mui/icons-material";
 import React, {useEffect, useState} from "react";
 import axiosInstance from "../utils/AxiosInstance";
-import APIResponse from "../entity/APIResponse";
-import {Note} from "../entity/Note";
+import APIResponse from "../entity/UtilEntity/APIResponse.ts";
+import {Note} from "../entity/Note/Note.ts";
 import {ShortUserInfoDisplay} from "../components/UtilComponents/ShortUserInfoDisplay.tsx";
 import {FUser} from "../entity/FUser";
 import sweetAlert from "sweetalert";
 import {AxiosResponse} from "axios";
 import {NoteBookmarkDialog} from "../components/Note/NoteBookmarkDialog.tsx";
-import ResponseCodes from "../entity/ResponseCodes";
-import {NoteReply} from "../entity/NoteReply";
+import ResponseCodes from "../entity/UtilEntity/ResponseCodes.ts";
+import {NoteReply} from "../entity/Note/NoteReply.ts";
 import {useNavigate, useParams} from "react-router-dom";
 
 export const NoteOpenPage = () => {

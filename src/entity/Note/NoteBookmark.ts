@@ -1,5 +1,5 @@
-import { Bookmark } from "./Bookmark";
-import { Note } from "./Note";
+import { Bookmark } from "../Bookmark.ts";
+import { Note } from "./Note.ts";
 
 export class NoteBookmark {
     noteBookmarkId: string;

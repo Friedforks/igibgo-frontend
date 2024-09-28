@@ -1,7 +1,7 @@
 import { Avatar, Paper, Stack, Typography } from "@mui/material";
 import { AxiosResponse } from "axios";
 import { useEffect, useState } from "react";
-import APIResponse from "../../entity/APIResponse.ts";
+import APIResponse from "../../entity/UtilEntity/APIResponse.ts";
 import { FUser } from "../../entity/FUser.ts";
 import axiosInstance from "../../utils/AxiosInstance.ts";
 import {

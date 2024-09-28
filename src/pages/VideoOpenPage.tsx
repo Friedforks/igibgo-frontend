@@ -1,10 +1,10 @@
 import { AxiosResponse } from "axios";
 import axiosInstance from "../utils/AxiosInstance";
-import APIResponse from "../entity/APIResponse";
+import APIResponse from "../entity/UtilEntity/APIResponse.ts";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import ResponseCodes from "../entity/ResponseCodes";
-import { Video } from "../entity/Video";
+import ResponseCodes from "../entity/UtilEntity/ResponseCodes.ts";
+import { Video } from "../entity/Video/Video.ts";
 import {
     Avatar,
     Box,
@@ -34,7 +34,7 @@ import {
 } from "@mui/icons-material";
 import { formatDate } from "../utils/DateUtil";
 import { ShortUserInfoDisplay } from "../components/UtilComponents/ShortUserInfoDisplay";
-import { VideoReply } from "../entity/VideoReply";
+import { VideoReply } from "../entity/Video/VideoReply.ts";
 import { checkLoginStatus, getUserInfo } from "../utils/LoginUtil";
 import { VideoBookmarkDialog } from "../components/Video/VideoBookmarkDialog.tsx";
 

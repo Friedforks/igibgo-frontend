@@ -1,32 +1,33 @@
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { HomePage } from "./pages/HomePage.tsx";
-import { NotePage } from "./pages/NotePage.tsx";
-import { TestPage } from "./pages/TestPage.tsx";
-import { NoteOpenPage } from "./pages/NoteOpenPage.tsx";
-import { UserPage } from "./pages/UserPage.tsx";
-import { VideoPage } from "./pages/VideoPage.tsx";
+import {createBrowserRouter, RouterProvider} from "react-router-dom";
+import {HomePage} from "./pages/HomePage.tsx";
+import {NotePage} from "./pages/NotePage.tsx";
+import {TestPage} from "./pages/TestPage.tsx";
+import {NoteOpenPage} from "./pages/NoteOpenPage.tsx";
+import {UserPage} from "./pages/UserPage.tsx";
+import {VideoPage} from "./pages/VideoPage.tsx";
 import CustomHeader1 from "./components/HomePage/CustomHeader1.tsx";
-import { VideoOpenPage } from "./pages/VideoOpenPage.tsx";
-import { ForumPage } from "./pages/ForumPage.tsx";
-import { PostEditPage } from "./pages/PostEditPage.tsx";
+import {VideoOpenPage} from "./pages/VideoOpenPage.tsx";
+import {ForumPage} from "./pages/ForumPage.tsx";
+import {PostEditPage} from "./pages/PostEditPage.tsx";
+import {PostOpenPage} from "./pages/PostOpenPage.tsx";
 
 function App() {
     const router = createBrowserRouter([
         {
             path: "/",
-            element: <HomePage />,
+            element: <HomePage/>,
         },
         {
             path: "/note",
-            element: <NotePage />,
+            element: <NotePage/>,
         },
         {
             path: "/video/search/:title",
-            element: <VideoPage />,
+            element: <VideoPage/>,
         },
         {
             path: "/video/search",
-            element: <VideoPage />,
+            element: <VideoPage/>,
         },
         {
             path: "/video/open/:videoId",
@@ -34,33 +35,37 @@ function App() {
         },
         {
             path: "/test",
-            element: <TestPage />,
+            element: <TestPage/>,
         },
         {
             path: "/note/open/:noteId",
-            element: <NoteOpenPage />,
+            element: <NoteOpenPage/>,
         },
         {
             path: "/user/:userId",
-            element: <UserPage />,
+            element: <UserPage/>,
         },
         {
             path: "/forum/search",
-            element:<ForumPage/>
+            element: <ForumPage/>
         },
         {
-            path: "/forum/search/:title",
-            element:<ForumPage/>
+            path: "/forum/search/:keywords",
+            element: <ForumPage/>
         },
         {
             path: "/forum/new",
-            element:<PostEditPage/>
+            element: <PostEditPage/>
+        },
+        {
+            path: "/forum/open/:postId",
+            element: <PostOpenPage/>
         }
     ]);
     return (
         <>
             <CustomHeader1>
-                <RouterProvider router={router} />
+                <RouterProvider router={router}/>
             </CustomHeader1>
         </>
     );

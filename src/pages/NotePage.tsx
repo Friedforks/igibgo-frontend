@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import axiosInstance from "../utils/AxiosInstance.ts";
 import { AxiosResponse } from "axios";
-import APIResponse from "../entity/APIResponse.ts";
-import ResponseCodes from "../entity/ResponseCodes.ts";
+import APIResponse from "../entity/UtilEntity/APIResponse.ts";
+import ResponseCodes from "../entity/UtilEntity/ResponseCodes.ts";
 import sweetAlert from "sweetalert";
-import { Note } from "../entity/Note.ts";
+import { Note } from "../entity/Note/Note.ts";
 import {
 	Box,
 	Breadcrumbs,

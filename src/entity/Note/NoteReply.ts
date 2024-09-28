@@ -13,7 +13,7 @@
  *     public FUser author;
  */
 import {Note} from "./Note.ts";
-import {FUser} from "./FUser.ts";
+import {FUser} from "../FUser.ts";
 
 export class NoteReply{
     noteReplyId:number;

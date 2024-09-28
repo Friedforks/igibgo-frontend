@@ -12,8 +12,8 @@ import {
 import { CustomBackdrop } from "../UtilComponents/CustomBackdrop.tsx";
 import axiosInstance from "../../utils/AxiosInstance";
 import { AxiosResponse } from "axios";
-import APIResponse from "../../entity/APIResponse";
-import ResponseCodes from "../../entity/ResponseCodes";
+import APIResponse from "../../entity/UtilEntity/APIResponse.ts";
+import ResponseCodes from "../../entity/UtilEntity/ResponseCodes.ts";
 
 type RegisterDialog1Props = {
     registerDialog1Open: boolean;

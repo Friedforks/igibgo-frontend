@@ -1,5 +1,5 @@
 import { TabPanel } from "@mui/lab";
-import { Note } from "../../entity/Note";
+import { Note } from "../../entity/Note/Note.ts";
 import { useNavigate } from "react-router-dom";
 import { NoteList } from "../Note/NoteList";
 

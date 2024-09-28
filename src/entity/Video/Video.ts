@@ -22,8 +22,8 @@
  *     @OneToMany(mappedBy = "video", cascade = CascadeType.ALL, orphanRemoval = true)
  *     public List<VideoTag> tags = new ArrayList<>();
  */
-import {FUser} from "./FUser.ts";
-import {Collection} from "./Collection.ts";
+import {FUser} from "../FUser.ts";
+import {Collection} from "../Collection.ts";
 import {VideoReply} from "./VideoReply.ts";
 import {VideoTag} from "./VideoTag.ts";
 

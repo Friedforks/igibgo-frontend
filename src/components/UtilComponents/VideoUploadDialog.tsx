@@ -22,9 +22,9 @@ import { CustomBackdrop } from "./CustomBackdrop.tsx";
 import { CollectionDialog } from "../Video/CollectionDialog.tsx";
 import { Collection } from "../../entity/Collection.ts";
 import { AxiosResponse } from "axios";
-import APIResponse from "../../entity/APIResponse.ts";
+import APIResponse from "../../entity/UtilEntity/APIResponse.ts";
 import { FUser } from "../../entity/FUser.ts";
-import ResponseCodes from "../../entity/ResponseCodes.ts";
+import ResponseCodes from "../../entity/UtilEntity/ResponseCodes.ts";
 import axiosInstance from "../../utils/AxiosInstance.ts";
 import { checkLoginStatus } from "../../utils/LoginUtil.ts";
 

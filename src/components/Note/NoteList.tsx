@@ -11,7 +11,7 @@ import {
     Chip,
     IconButton,
 } from "@mui/material";
-import { Note } from "../../entity/Note";
+import { Note } from "../../entity/Note/Note.ts";
 import {
     VisibilityOutlined,
     ThumbUpAltOutlined,
@@ -20,8 +20,8 @@ import {
 import { FUser } from "../../entity/FUser";
 import axiosInstance from "../../utils/AxiosInstance";
 import { AxiosResponse } from "axios";
-import APIResponse from "../../entity/APIResponse";
-import ResponseCodes from "../../entity/ResponseCodes";
+import APIResponse from "../../entity/UtilEntity/APIResponse.ts";
+import ResponseCodes from "../../entity/UtilEntity/ResponseCodes.ts";
 
 type NoteListProps = {
     noteList: Note[];

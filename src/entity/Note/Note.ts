@@ -1,5 +1,5 @@
-import { FUser } from "./FUser.ts";
-import { Collection } from "./Collection.ts";
+import { FUser } from "../FUser.ts";
+import { Collection } from "../Collection.ts";
 import { NoteReply } from "./NoteReply.ts";
 import { NoteTag } from "./NoteTag.ts";
 

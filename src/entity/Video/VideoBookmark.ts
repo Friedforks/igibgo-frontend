@@ -1,5 +1,5 @@
-import { Bookmark } from "./Bookmark";
-import { Video } from "./Video";
+import { Bookmark } from "../Bookmark.ts";
+import { Video } from "./Video.ts";
 
 export class VideoBookmark {
     videoBookmarkId: string;

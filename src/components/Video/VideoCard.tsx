@@ -7,7 +7,7 @@ import {
     Stack,
     Typography,
 } from "@mui/material";
-import { Video } from "../../entity/Video.ts";
+import { Video } from "../../entity/Video/Video.ts";
 import { useNavigate } from "react-router-dom";
 
 // later to pass prop. Now only placeholder so no need.

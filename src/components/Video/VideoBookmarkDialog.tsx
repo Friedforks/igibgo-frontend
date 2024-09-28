@@ -3,8 +3,8 @@ import { Bookmark } from "../../entity/Bookmark.ts";
 import { FUser } from "../../entity/FUser.ts";
 import axiosInstance from "../../utils/AxiosInstance.ts";
 import { AxiosResponse } from "axios";
-import APIResponse from "../../entity/APIResponse.ts";
-import ResponseCodes from "../../entity/ResponseCodes.ts";
+import APIResponse from "../../entity/UtilEntity/APIResponse.ts";
+import ResponseCodes from "../../entity/UtilEntity/ResponseCodes.ts";
 import {
     Button,
     Checkbox,
@@ -17,7 +17,7 @@ import {
     TextField
 } from "@mui/material";
 import { AddOutlined } from "@mui/icons-material";
-import { VideoBookmark } from "../../entity/VideoBookmark.ts";
+import { VideoBookmark } from "../../entity/Video/VideoBookmark.ts";
 
 type VideoBookmarkDialogProps = {
     open: boolean;

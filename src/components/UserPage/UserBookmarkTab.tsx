@@ -2,7 +2,7 @@ import { TabPanel } from "@mui/lab";
 import { useEffect, useState } from "react";
 import axiosInstance from "../../utils/AxiosInstance";
 import { AxiosResponse } from "axios";
-import APIResponse from "../../entity/APIResponse";
+import APIResponse from "../../entity/UtilEntity/APIResponse.ts";
 import { Bookmark } from "../../entity/Bookmark";
 import {
     Accordion,
@@ -12,13 +12,13 @@ import {
     Typography,
 } from "@mui/material";
 import { ExpandMoreOutlined } from "@mui/icons-material";
-import { NoteBookmark } from "../../entity/NoteBookmark";
+import { NoteBookmark } from "../../entity/Note/NoteBookmark.ts";
 import { useNavigate } from "react-router-dom";
-import { Note } from "../../entity/Note";
+import { Note } from "../../entity/Note/Note.ts";
 import { NoteList } from "../Note/NoteList";
 import { VideoGrid } from "../Video/VideoGrid";
-import { Video } from "../../entity/Video";
-import { VideoBookmark } from "../../entity/VideoBookmark";
+import { Video } from "../../entity/Video/Video.ts";
+import { VideoBookmark } from "../../entity/Video/VideoBookmark.ts";
 
 type UserBookmarkTabProps = {
     userId: number;

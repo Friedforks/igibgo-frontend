@@ -13,9 +13,9 @@ import {
 } from "@mui/material";
 import { CustomBackdrop } from "../UtilComponents/CustomBackdrop.tsx";
 import { AxiosResponse } from "axios";
-import APIResponse from "../../entity/APIResponse";
+import APIResponse from "../../entity/UtilEntity/APIResponse.ts";
 import { FUser } from "../../entity/FUser";
-import ResponseCodes from "../../entity/ResponseCodes";
+import ResponseCodes from "../../entity/UtilEntity/ResponseCodes.ts";
 import axiosInstance from "../../utils/AxiosInstance";
 import { useState } from "react";
 

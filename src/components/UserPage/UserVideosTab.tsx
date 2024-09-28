@@ -1,4 +1,4 @@
-import { Video } from "../../entity/Video"
+import { Video } from "../../entity/Video/Video.ts"
 import { TabPanel } from "@mui/lab";
 import { VideoGrid } from "../Video/VideoGrid";
 

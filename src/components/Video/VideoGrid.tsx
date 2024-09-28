@@ -1,6 +1,6 @@
 import { Grid, Typography } from "@mui/material";
 import { VideoCard } from "./VideoCard";
-import { Video } from "../../entity/Video";
+import { Video } from "../../entity/Video/Video.ts";
 
 type VideoGridProps = {
     videos: Video[];
