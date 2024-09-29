@@ -13,6 +13,9 @@ import { UserBookmarkTab } from "../components/UserPage/UserBookmarkTab";
 import { UserVideoTab } from "../components/UserPage/UserVideosTab.tsx";
 import { Video } from "../entity/Video/Video.ts";
 import { UserSettingsTab } from "../components/UserPage/UserSettingsTab.tsx";
+import {UserPostTab} from "../components/UserPage/UserPostTab.tsx";
+import {Post} from "../entity/Post/Post.ts";
+import ResponseCodes from "../entity/UtilEntity/ResponseCodes.ts";
 
 export const UserPage = () => {
     const params = useParams();
@@ -25,6 +28,7 @@ export const UserPage = () => {
     const [tabPage, setTabPage] = useState<string>("1");
     const [noteList, setNoteList] = useState<Note[]>([]);
     const [videoList, setVideoList] = useState<Video[]>([]);
+    const [postList, setPostList] = useState<Post[]>([]);
     useEffect(() => {
         // console.log("debug: currentUserId", currentUserId);
         // console.log("debug: isCurrentUser", isCurrentUser);
@@ -42,6 +46,7 @@ export const UserPage = () => {
         getNotes();
         getCurrentUser();
         getVideos();
+        getPosts();
     }, [currentUserId]);
 
     const getCurrentUser = () => {
@@ -76,6 +81,24 @@ export const UserPage = () => {
     const handleChange = (_event: React.SyntheticEvent, newTabPage: string) => {
         setTabPage(newTabPage);
     };
+
+    const getPosts = async () => {
+        axiosInstance.get("/forum/get/authorId", {
+            params: {
+                authorId: currentUserId,
+            },
+        }).then((response: AxiosResponse<APIResponse<Post[]>>) => {
+            if (response.data.code == ResponseCodes.SUCCESS) {
+                console.log("post list: ", response.data.data);
+                setPostList(response.data.data);
+            } else {
+                console.log("Error in get post list request: " + response.data.message);
+            }
+        }).catch((error) => {
+            console.log("Error in get post list request: " + error);
+        });
+    }
+
 
     if (user == undefined) {
         return <Skeleton></Skeleton>;
@@ -116,7 +139,7 @@ export const UserPage = () => {
                                     >
                                         <Tab label="Notes" value="1" />
                                         <Tab label="Videos" value="2" />
-                                        {/* <Tab label="Posts" value="3" /> */}
+                                         <Tab label="Posts" value="3" />
                                         {isCurrentUser && (
                                             <Tab label="Bookmarks" value="4" />
                                         )}
@@ -130,8 +153,7 @@ export const UserPage = () => {
                                 </Box>
                                 <UserNotesTab noteList={noteList} />
                                 <UserVideoTab videos={videoList} />
-                                {/* <TabPanel value="2">Item Two</TabPanel> */}
-                                {/* <TabPanel value="3">Item Three</TabPanel> */}
+                                <UserPostTab posts={postList} />
                                 <UserBookmarkTab userId={currentUserId} />
                                 <UserSettingsTab />
                             </TabContext>

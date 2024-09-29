@@ -10,7 +10,7 @@ import {
     Typography
 } from "@mui/material";
 import {Post} from "../../entity/Post/Post.ts";
-import {Delete, ThumbUpAltOutlined, VisibilityOutlined} from "@mui/icons-material";
+import {Delete, VisibilityOutlined} from "@mui/icons-material";
 import {PostTag} from "../../entity/Post/PostTag.ts";
 import {FUser} from "../../entity/FUser.ts";
 import axiosInstance from "../../utils/AxiosInstance.ts";
@@ -46,7 +46,7 @@ export const PostList = ({postList}: PostListProps) => {
     }
     return (
         <>
-            {postList.length == 0 ? (
+            {!postList||postList.length == 0 ? (
                 <Typography variant="body1" sx={{margin: "1rem"}}>
                     No posts
                 </Typography>
@@ -92,21 +92,6 @@ export const PostList = ({postList}: PostListProps) => {
                                                     }}
                                                 >
                                                     {post.viewCount}
-                                                </Typography>
-                                            </>
-                                            <>
-
-                                                <ThumbUpAltOutlined
-                                                    fontSize="small"
-                                                    sx={{
-                                                        marginRight: "3px",
-                                                    }}
-                                                />
-                                                <Typography
-                                                    variant="body2"
-                                                    color="text.secondary"
-                                                >
-                                                    {post.likeCount}
                                                 </Typography>
                                             </>
                                         </Stack>
