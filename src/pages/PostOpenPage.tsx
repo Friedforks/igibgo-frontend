@@ -22,6 +22,7 @@ import {PostReplyList} from "../components/Post/PostReplyList.tsx";
 import {PostReply} from "../entity/Post/PostReply.ts";
 import {MdEditor, CustomEditorRef} from "../components/UtilComponents/MdEditor.tsx";
 import {MdPreview} from "../components/UtilComponents/MdPreview.tsx";
+import {formatDate} from "../utils/DateUtil.ts";
 
 export const PostOpenPage = () => {
     const param = useParams();
@@ -38,6 +39,7 @@ export const PostOpenPage = () => {
             }
         }).then((response: AxiosResponse<APIResponse<Post>>) => {
             if (response.data.code == ResponseCodes.SUCCESS) {
+                response.data.data.uploadDate=formatDate(response.data.data.uploadDate);
                 setPost(response.data.data);
                 // createVidtor(response.data.data.postContent);
                 setPostContent(response.data.data.postContent);

@@ -1,69 +1,83 @@
 import {
-    Avatar, Chip,
-    Divider, IconButton,
+    Avatar,
+    Chip,
+    Divider,
+    IconButton,
     List,
     ListItem,
     ListItemAvatar,
     ListItemButton,
     ListItemText,
     Stack,
-    Typography
+    Typography,
 } from "@mui/material";
-import {Post} from "../../entity/Post/Post.ts";
-import {Delete, VisibilityOutlined} from "@mui/icons-material";
-import {PostTag} from "../../entity/Post/PostTag.ts";
-import {FUser} from "../../entity/FUser.ts";
+import { Post } from "../../entity/Post/Post.ts";
+import { Delete, Edit, VisibilityOutlined } from "@mui/icons-material";
+import { PostTag } from "../../entity/Post/PostTag.ts";
+import { FUser } from "../../entity/FUser.ts";
 import axiosInstance from "../../utils/AxiosInstance.ts";
-import {AxiosResponse} from "axios";
+import { AxiosResponse } from "axios";
 import APIResponse from "../../entity/UtilEntity/APIResponse.ts";
 import ResponseCodes from "../../entity/UtilEntity/ResponseCodes.ts";
-import {useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 type PostListProps = {
     postList: Post[];
-}
-export const PostList = ({postList}: PostListProps) => {
+};
+export const PostList = ({ postList }: PostListProps) => {
     const navigate = useNavigate();
-    const userInfo = JSON.parse(localStorage.getItem("userInfo") as string) as FUser;
+    const userInfo = JSON.parse(
+        localStorage.getItem("userInfo") as string
+    ) as FUser;
     const handleDeletePost = (postId: string) => {
         axiosInstance
-            .delete('/forum/delete', {
+            .delete("/forum/delete", {
                 params: {
                     postId: postId,
-                    token: localStorage.getItem("token")
+                    token: localStorage.getItem("token"),
+                },
+            })
+            .then((response: AxiosResponse<APIResponse<void>>) => {
+                if (response.data.code == ResponseCodes.SUCCESS) {
+                    sweetAlert(
+                        "Success",
+                        "Post deleted successfully",
+                        "success"
+                    ).then(() => {
+                        window.location.reload();
+                    });
+                } else {
+                    sweetAlert("Error", response.data.message, "error");
                 }
-            }).then((response: AxiosResponse<APIResponse<void>>) => {
-            if (response.data.code == ResponseCodes.SUCCESS) {
-                sweetAlert("Success", "Post deleted successfully", "success").then(() => {
-                    window.location.reload();
-                });
-            } else {
-                sweetAlert("Error", response.data.message, "error");
-            }
-        }).catch((error) => {
-            sweetAlert("Error", error, "error");
-        });
-    }
+            })
+            .catch((error) => {
+                sweetAlert("Error", error, "error");
+            });
+    };
     return (
         <>
-            {!postList||postList.length == 0 ? (
-                <Typography variant="body1" sx={{margin: "1rem"}}>
+            {!postList || postList.length == 0 ? (
+                <Typography variant="body1" sx={{ margin: "1rem" }}>
                     No posts
                 </Typography>
             ) : (
-                <List sx={{width: "100%"}}>
+                <List sx={{ width: "100%" }}>
                     {postList.map((post: Post) => (
                         <ListItem
                             key={post.postId}
                             alignItems="center"
-                            disablePadding>
+                            disablePadding
+                        >
                             <ListItemButton
                                 onClick={() => {
-                                    navigate('/forum/open/' + post.postId)
+                                    navigate("/forum/open/" + post.postId);
                                 }}
                             >
                                 <ListItemAvatar>
-                                    <Avatar alt="user avatar" src={post.author.avatarUrl}/>
+                                    <Avatar
+                                        alt="user avatar"
+                                        src={post.author.avatarUrl}
+                                    />
                                 </ListItemAvatar>
                                 <ListItemText
                                     primary={post.title}
@@ -81,7 +95,7 @@ export const PostList = ({postList}: PostListProps) => {
                                             <>
                                                 <VisibilityOutlined
                                                     fontSize="small"
-                                                    sx={{marginRight: "3px"}}
+                                                    sx={{ marginRight: "3px" }}
                                                 />
 
                                                 <Typography
@@ -112,14 +126,25 @@ export const PostList = ({postList}: PostListProps) => {
                                     ))}
                                 </Stack>
                             </ListItemButton>
-                            {/*post delete button*/}
                             {post.author.userId == userInfo.userId && (
-                                <IconButton
-                                    children={<Delete/>}
-                                    onClick={() => {
-                                        handleDeletePost(post.postId);
-                                    }}
-                                />
+                                <>
+                                    {/*post edit button*/}
+                                    <IconButton
+                                        children={<Edit />}
+                                        onClick={() => {
+                                            navigate(
+                                                `/forum/new?postId=${post.postId}`
+                                            );
+                                        }}
+                                    />
+                                    {/*post delete button*/}
+                                    <IconButton
+                                        children={<Delete />}
+                                        onClick={() => {
+                                            handleDeletePost(post.postId);
+                                        }}
+                                    />
+                                </>
                             )}
                         </ListItem>
                     ))}
