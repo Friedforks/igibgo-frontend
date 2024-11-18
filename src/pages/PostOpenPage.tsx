@@ -30,12 +30,13 @@ export const PostOpenPage = () => {
     const [post, setPost] = useState<Post>();
     const [dataUpdateRequired, setDataUpdateRequired] = useState<boolean>(false);
     const [replies, setReplies] = useState<PostReply[]>();
-    const [postConent, setPostContent] = useState<string>("");
+    const [postContent, setPostContent] = useState<string>("");
 
     const getPost = async () => {
         axiosInstance.get("/forum/get/postId", {
             params: {
-                postId: postId
+                postId: postId,
+                token: localStorage.getItem("token")
             }
         }).then((response: AxiosResponse<APIResponse<Post>>) => {
             if (response.data.code == ResponseCodes.SUCCESS) {
@@ -131,7 +132,7 @@ export const PostOpenPage = () => {
                         <div>{post?.uploadDate.toString()}</div>
                     </Stack>
                     {/*    render post markdown*/}
-                    <MdPreview content={postConent} maxWidth={window.innerWidth*0.9}/>
+                    <MdPreview content={postContent} maxWidth={window.innerWidth*0.9}/>
                 </div>
                 {/* replies */}
                 <Divider textAlign="left" style={{marginTop: "1rem"}}>

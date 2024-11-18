@@ -232,7 +232,7 @@ export const NotePage = () => {
 				</Grid>
 				<Grid item>
 					<IconButton
-						aria-label="delete"
+						// aria-label="delete"
 						size="small"
 						onClick={() => {
 							page > 0 ? setPage(page - 1) : setPage(0);
