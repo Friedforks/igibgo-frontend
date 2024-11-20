@@ -148,7 +148,7 @@ const ReplyItem: React.FC<ReplyItemProps> = ({ reply, depth }) => {
         <>
             <ListItem alignItems="flex-start" sx={{ pl: depth * 4 }}>
                 <ListItemAvatar>
-                    <div onClick={()=>navigate("/user/"+userInfo.userId)}>
+                    <div onClick={()=>navigate("/user/"+reply.user.userId)}>
                         <Avatar
                             alt={reply.user.username}
                             src={reply.user.avatarUrl}
