@@ -9,7 +9,11 @@ type VideoGridProps = {
 export const VideoGrid = ({ videos }: VideoGridProps) => {
     return (
         <>
-            {videos.length != 0 ? (
+            {videos.length == 0 ? (
+                <Typography variant="body1" sx={{ margin: "1rem" }}>
+                    No videos
+                </Typography>
+            ) : (
                 <Grid
                     container
                     spacing={{ xs: 2, md: 2 }}
@@ -34,10 +38,6 @@ export const VideoGrid = ({ videos }: VideoGridProps) => {
                         </Grid>
                     ))}
                 </Grid>
-            ) : (
-                <Typography variant="h6" align="center">
-                    No videos found
-                </Typography>
             )}
         </>
     );

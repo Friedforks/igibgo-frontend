@@ -61,9 +61,15 @@ export const NoteList = ({
                 console.log("Error in deleting note", error);
             });
     };
+
+
     return (
         <>
-            {noteList.length != 0 ? (
+            {noteList.length == 0 ? (
+                <Typography variant="body1" sx={{ margin: "1rem" }}>
+                    No notes
+                </Typography>
+            ) : (
                 <List sx={{ width: "100%" }}>
                     {noteList.map((value: Note) => (
                         <>
@@ -158,10 +164,6 @@ export const NoteList = ({
                         </>
                     ))}
                 </List>
-            ) : (
-                <Typography variant="body1" sx={{ margin: "1rem" }}>
-                    No notes
-                </Typography>
             )}
         </>
     );

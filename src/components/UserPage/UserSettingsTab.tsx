@@ -71,11 +71,11 @@ export const UserSettingsTab = () => {
             });
     };
 
-    const handleAvatarChange= (event: React.FormEvent<HTMLFormElement>) => {
+    const handleAvatarChange = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const data = new FormData();
         data.append("avatar", avatar as Blob);
-        
+
         axiosInstance
             .post("/fuser/update/avatar", data, {
                 params: {
@@ -118,7 +118,7 @@ export const UserSettingsTab = () => {
                             required
                             margin="dense"
                             name="newPassword"
-                            label="Your current password"
+                            label="Your new password"
                             fullWidth
                             type="password"
                             variant="standard"
@@ -146,7 +146,7 @@ export const UserSettingsTab = () => {
                         <br />
                         <br />
                         <Button type="submit" variant="contained">
-                            Change password
+                            Change username
                         </Button>
                     </form>
                 </Grid>
