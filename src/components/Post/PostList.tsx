@@ -54,6 +54,8 @@ export const PostList = ({ postList }: PostListProps) => {
                 sweetAlert("Error", error, "error");
             });
     };
+
+
     return (
         <>
             {!postList || postList.length == 0 ? (
@@ -97,7 +99,6 @@ export const PostList = ({ postList }: PostListProps) => {
                                                     fontSize="small"
                                                     sx={{ marginRight: "3px" }}
                                                 />
-
                                                 <Typography
                                                     variant="body2"
                                                     color="text.secondary"
