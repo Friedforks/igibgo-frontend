@@ -32,7 +32,7 @@ export const PostEditPage = () => {
 
     const getTags = async () => {
         axiosInstance
-            .get("/video/get/allTags")
+            .get("/forum/get/allTags")
             .then((response: AxiosResponse<APIResponse<string[]>>) => {
                 if (response.data.code == ResponseCodes.SUCCESS) {
                     // encapsulate response data (available tags) + fixed tags -> suggested tags
