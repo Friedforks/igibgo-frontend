@@ -169,7 +169,7 @@
 // };
 
 
-import React, {useEffect, useRef, useState} from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Vditor from "vditor";
 
 interface MdPreviewProps {
@@ -180,10 +180,10 @@ interface MdPreviewProps {
 }
 
 export const MdPreview: React.FC<MdPreviewProps> = ({
-                                                        content,
-                                                        maxHeight = window.innerHeight * 0.7,
-                                                        padding = 0,
-                                                    }) => {
+    content,
+    maxHeight = window.innerHeight * 0.7,
+    padding = 0,
+}) => {
     const previewRef = useRef<HTMLDivElement>(null);
     const outlineRef = useRef<HTMLDivElement>(null);
     const [toc, setToc] = useState<Array<{ id: string; offsetTop: number }>>([]);
@@ -191,7 +191,8 @@ export const MdPreview: React.FC<MdPreviewProps> = ({
     useEffect(() => {
         if (previewRef.current) {
             Vditor.preview(previewRef.current, content, {
-                cdn: "",
+                // cdn: "",
+                cdn: "https://unpkg.com/vditor@3.10.6",
                 mode: "light",
                 markdown: {
                     toc: true,
@@ -276,7 +277,7 @@ export const MdPreview: React.FC<MdPreviewProps> = ({
     }, [toc]);
 
     return (
-        <div style={{display: "flex"}}>
+        <div style={{ display: "flex" }}>
             <div
                 ref={previewRef}
                 className="vditor"
@@ -300,6 +301,7 @@ export const MdPreview: React.FC<MdPreviewProps> = ({
                     overflowY: "auto",
                     padding: "10px",
                     width: "200px",
+                    fontFamily: "Roboto"
                 }}
             />
         </div>

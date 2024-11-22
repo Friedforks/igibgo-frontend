@@ -28,7 +28,7 @@ export const MdEditor = forwardRef<CustomEditorRef, CustomEditorProps>(
         ref
     ) => {
         const [vd, setVd] = useState<Vditor>();
-        const vdRef=useRef<Vditor|null>(null);
+        const vdRef = useRef<Vditor | null>(null);
 
         useImperativeHandle(ref, () => ({
             getValue: () => vdRef.current?.getValue(),
@@ -111,7 +111,7 @@ export const MdEditor = forwardRef<CustomEditorRef, CustomEditorProps>(
                         engine: "MathJax",
                     },
                 },
-                cdn: "",
+                cdn: "https://cdn.jsdelivr.net/npm/vditor@3.10.6",
                 upload: {
                     accept: "image/*",
                     multiple: false,
@@ -143,7 +143,7 @@ export const MdEditor = forwardRef<CustomEditorRef, CustomEditorProps>(
                 },
                 after: () => {
                     setVd(vditor);
-                    vdRef.current=vditor;
+                    vdRef.current = vditor;
                 },
             });
 
