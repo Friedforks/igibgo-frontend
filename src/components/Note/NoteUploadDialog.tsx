@@ -8,9 +8,9 @@ import {
     DialogTitle,
     InputLabel,
     MenuItem,
-    Select,
+    Select, Stack,
     TextField,
-    Typography,
+    Typography
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../../utils/AxiosInstance";
@@ -22,6 +22,8 @@ import { Collection } from "../../entity/Collection";
 import { AxiosResponse } from "axios";
 import { LineProgressBuffer } from "../Upload/LineProgressBuffer.tsx";
 import { checkLoginStatus } from "../../utils/LoginUtil.ts";
+import { TagAutocomplete } from "../UtilComponents/TagAutocomplete.tsx";
+import { Constants, Tag } from "../../utils/Constants.ts";
 
 type NoteUploadDialogProps = {
     open: boolean;
@@ -29,9 +31,9 @@ type NoteUploadDialogProps = {
 };
 
 export const NoteUploadDialog: React.FC<NoteUploadDialogProps> = ({
-    open,
-    setOpen,
-}) => {
+                                                                      open,
+                                                                      setOpen
+                                                                  }) => {
     const [collectionValue, setCollectionValue] = useState<string>("");
     const [availableCollections, setAvailableCollections] = useState<
         Collection[]
@@ -41,8 +43,11 @@ export const NoteUploadDialog: React.FC<NoteUploadDialogProps> = ({
     const [isUploading, setUploading] = useState(false);
     const [progress, setProgress] = useState(0);
     const [buffer, setBuffer] = useState(10);
+    const [suggestedTags, setSuggestedTags] = useState<Tag[]>([]);
+    const [selectedTags, setSelectedTags] = useState<(string)[]>([]);
+    const [inputValue, setInputValue] = useState<string>("");
 
-    const getCollections = () => {
+    const getCollections = async () => {
         // get collections
         const userInfo = localStorage.getItem("userInfo");
         if (userInfo) {
@@ -50,8 +55,8 @@ export const NoteUploadDialog: React.FC<NoteUploadDialogProps> = ({
             axiosInstance
                 .get("/collection/get/userId", {
                     params: {
-                        userId: userId,
-                    },
+                        userId: userId
+                    }
                 })
                 .then((response: AxiosResponse<APIResponse<Collection[]>>) => {
                     if (response.data.code == ResponseCodes.SUCCESS) {
@@ -63,8 +68,37 @@ export const NoteUploadDialog: React.FC<NoteUploadDialogProps> = ({
         }
     };
 
+    // tags
+    const getTags = async () => {
+        axiosInstance
+            .get("/note/get/allTags")
+            .then((response: AxiosResponse<APIResponse<string[]>>) => {
+                if (response.data.code == ResponseCodes.SUCCESS) {
+                    // encapsulate response data (available tags) + fixed tags -> suggested tags
+                    const tmpTags: Tag[] = Constants.fixedTags.map((tag) => ({
+                        label: tag,
+                        fixed: true
+                    })).concat(response.data.data.map((tag) => ({ label: tag.trim(), fixed: false })));
+                    // Remove duplicates
+                    const uniqueTags = Array.from(new Set(tmpTags.map(tag => tag.label))).map(label => tmpTags.find(tag => tag.label === label)!);
+                    setSuggestedTags(uniqueTags);
+                } else {
+                    sweetAlert("Error", response.data.message, "error");
+                }
+            });
+    };
+
+    const handleChange = (_event: React.SyntheticEvent, newValue: (string | Tag)[]) => {
+        setSelectedTags(newValue.map((item) => typeof item === "string" ? item : item.label));
+    };
+
+    const handleInputChange = (_event: React.SyntheticEvent, newInputValue: string) => {
+        setInputValue(newInputValue);
+    };
+
     useEffect(() => {
         getCollections();
+        getTags();
     }, []);
 
     const addCollectionSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -80,8 +114,8 @@ export const NoteUploadDialog: React.FC<NoteUploadDialogProps> = ({
                 .post("/collection/add", 0, {
                     params: {
                         collectionName: collectionName,
-                        userId: (JSON.parse(userInfo) as FUser).userId,
-                    },
+                        userId: (JSON.parse(userInfo) as FUser).userId
+                    }
                 })
                 .then((resp: AxiosResponse<APIResponse<null>>) => {
                     if (resp.data.code == ResponseCodes.SUCCESS) {
@@ -109,7 +143,6 @@ export const NoteUploadDialog: React.FC<NoteUploadDialogProps> = ({
         const formData = new FormData(event.currentTarget);
         const noteFile = formData.get("noteFile") as File;
         const title = formData.get("title") as string;
-        const tags = formData.get("tags") as string;
         const userInfo = JSON.parse(
             localStorage.getItem("userInfo") as string
         ) as FUser;
@@ -123,21 +156,16 @@ export const NoteUploadDialog: React.FC<NoteUploadDialogProps> = ({
         }
         const collectionId = collectionValue;
         const data = new FormData();
-        data.append("note", noteFile);
-        data.append("authorId", userInfo.userId.toString());
-        data.append("collectionId", collectionId);
-        data.append("title", title);
-        data.append("tags", tags);
         if (title == null || title == "") {
             sweetAlert("Error", "Please enter title", "error");
             return;
         }
-        if (tags == null || tags == "") {
+        if (selectedTags.length===0) {
             sweetAlert("Error", "Please enter tags", "error");
             return;
         }
         if (collectionId == null || collectionId == "") {
-            sweetAlert("Error", "Please select a collection", "error");
+            sweetAlert("Error", "Please select a collection. A collection is a folder that you'll categorize the note into. It makes your notes to become more organized.", "error");
             return;
         }
         if ((await checkLoginStatus()) == false) {
@@ -147,6 +175,15 @@ export const NoteUploadDialog: React.FC<NoteUploadDialogProps> = ({
                 "error"
             );
         }
+
+        // make tags list into string, split by comma
+        const tags=selectedTags.join(",");
+
+        data.append("note", noteFile);
+        data.append("authorId", userInfo.userId.toString());
+        data.append("collectionId", collectionId);
+        data.append("title", title);
+        data.append("tags", tags);
 
         console.log("collectionId" + collectionId);
         setUploading(true);
@@ -159,7 +196,7 @@ export const NoteUploadDialog: React.FC<NoteUploadDialogProps> = ({
                     );
                     setProgress(currentProgress);
                     setBuffer(currentProgress + Math.round(10 * Math.random()));
-                },
+                }
             })
             .then((resp: AxiosResponse<APIResponse<null>>) => {
                 setUploading(false);
@@ -197,113 +234,117 @@ export const NoteUploadDialog: React.FC<NoteUploadDialogProps> = ({
     return (
         <>
             {/* Note upload dialog */}
-            <Dialog
-                open={open}
-                onClose={() => {
-                    setOpen(false);
-                    console.log("open");
-                }}
-                PaperProps={{
-                    component: "form",
-                    onSubmit: noteUploadSubmit,
-                }}
-            >
-                {isUploading && (
-                    <LineProgressBuffer progress={progress} buffer={buffer} />
-                )}
-                <DialogTitle>Upload your own note!</DialogTitle>
-                <DialogContent>
-                    <DialogContentText>
-                        Study hive is a platform for sharing knowledge.
-                        <b>Every user </b>can share their notes with others.
-                        Please upload your note <b>in .pdf format</b> here.
-                    </DialogContentText>
-                    <label>
+                <Dialog
+                    open={open}
+                    onClose={() => {
+                        setOpen(false);
+                        console.log("open");
+                    }}
+                    PaperProps={{
+                        component: "form",
+                        onSubmit: noteUploadSubmit
+                    }}
+                >
+                    {isUploading && (
+                        <LineProgressBuffer progress={progress} buffer={buffer} />
+                    )}
+                    <DialogTitle>Upload your own note!</DialogTitle>
+                    <DialogContent>
+                        <DialogContentText>
+                            Study hive is a platform for sharing knowledge.
+                            <b>Every user </b>can share their notes with others.
+                            Please upload your note <b>in .pdf format</b> here.
+                        </DialogContentText>
+                        <Stack direction="column" spacing={2}>
+                            <label>
+                                <Button
+                                    component="span"
+                                    variant="contained"
+                                    tabIndex={-1}
+                                    startIcon={<CloudUpload />}
+                                >
+                                    Upload Note (PDF)
+                                </Button>
+                                <input
+                                    name="noteFile"
+                                    type="file"
+                                    hidden
+                                    style={{ display: "none" }}
+                                    onChange={handleFileChange}
+                                />
+                                <Typography
+                                    variant="caption"
+                                    style={{ marginLeft: "5px" }}
+                                >
+                                    {file && file.name}
+                                </Typography>
+                            </label>
+                            <TextField
+                                autoFocus
+                                required
+                                name="title"
+                                label="Note Title:"
+                                type="text"
+                                fullWidth
+                                variant="standard"
+                            />
+                            <TagAutocomplete suggestedTags={suggestedTags} selectedTags={selectedTags}
+                                             inputValue={inputValue} handleChange={handleChange}
+                                             handleInputChange={handleInputChange} />
+
+                            {/*<TextField*/}
+                            {/*    autoFocus*/}
+                            {/*    required*/}
+                            {/*    margin="dense"*/}
+                            {/*    name="tags"*/}
+                            {/*    label="Tags (separate with comma):"*/}
+                            {/*    type="text"*/}
+                            {/*    fullWidth*/}
+                            {/*    variant="standard"*/}
+                            {/*/>*/}
+                            <label>
+                                <InputLabel id="demo-multiple-chip-label" required>
+                                    Collection (categorize your file)
+                                </InputLabel>
+                                <Select
+                                    name="collection"
+                                    value={collectionValue}
+                                    fullWidth
+                                    onChange={(event) => {
+                                        setCollectionValue(
+                                            event.target.value as string
+                                        );
+                                    }}
+                                >
+                                    {availableCollections.map((collection) => (
+                                        <MenuItem value={collection.collectionId}>
+                                            {collection.collectionName}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                            </label>
+                            <Button
+                                variant="outlined"
+                                startIcon={<AddOutlined />}
+                                onClick={() => {
+                                    setAddCollectionDialogOpen(true);
+                                }}
+                            >
+                                Add collection
+                            </Button>
+                        </Stack>
+                    </DialogContent>
+                    <DialogActions>
                         <Button
-                            component="span"
-                            variant="contained"
-                            tabIndex={-1}
-                            startIcon={<CloudUpload />}
-                        >
-                            Upload Note (PDF)
-                        </Button>
-                        <input
-                            name="noteFile"
-                            type="file"
-                            hidden
-                            style={{ display: "none" }}
-                            onChange={handleFileChange}
-                        />
-                        <Typography
-                            variant="caption"
-                            style={{ marginLeft: "5px" }}
-                        >
-                            {file && file.name}
-                        </Typography>
-                    </label>
-                    <TextField
-                        autoFocus
-                        required
-                        margin="dense"
-                        name="title"
-                        label="Note Title:"
-                        type="text"
-                        fullWidth
-                        variant="standard"
-                    />
-                    <TextField
-                        autoFocus
-                        required
-                        margin="dense"
-                        name="tags"
-                        label="Tags (separate with comma):"
-                        type="text"
-                        fullWidth
-                        variant="standard"
-                    />
-                    <label>
-                        <InputLabel id="demo-multiple-chip-label">
-                            Collection:
-                        </InputLabel>
-                        <Select
-                            name="collection"
-                            value={collectionValue}
-                            fullWidth
-                            onChange={(event) => {
-                                setCollectionValue(
-                                    event.target.value as string
-                                );
+                            onClick={() => {
+                                setOpen(false);
                             }}
                         >
-                            {availableCollections.map((collection) => (
-                                <MenuItem value={collection.collectionId}>
-                                    {collection.collectionName}
-                                </MenuItem>
-                            ))}
-                        </Select>
-                    </label>
-                    <Button
-                        variant="outlined"
-                        startIcon={<AddOutlined />}
-                        sx={{ marginTop: "10px" }}
-                        onClick={() => {
-                            setAddCollectionDialogOpen(true);
-                        }}
-                    >
-                        Add collection
-                    </Button>
-                </DialogContent>
-                <DialogActions>
-                    <Button
-                        onClick={() => {
-                            setOpen(false);
-                        }}
-                    >
-                        Cancel
-                    </Button>
-                    <Button type="submit">Submit</Button>
-                </DialogActions>
-            </Dialog>
+                            Cancel
+                        </Button>
+                        <Button type="submit">Submit</Button>
+                    </DialogActions>
+                </Dialog>
 
             {/* Add collection dialog */}
             <Dialog
@@ -313,7 +354,7 @@ export const NoteUploadDialog: React.FC<NoteUploadDialogProps> = ({
                 }}
                 PaperProps={{
                     component: "form",
-                    onSubmit: addCollectionSubmit,
+                    onSubmit: addCollectionSubmit
                 }}
             >
                 <DialogTitle>Add a new collection</DialogTitle>

@@ -1,4 +1,4 @@
-import { Button, Skeleton, Stack, TextField, Typography } from "@mui/material";
+import { Button, Grid, Skeleton, Stack, TextField, Typography } from "@mui/material";
 import React, { useEffect, useRef, useState } from "react";
 import "vditor/dist/index.css";
 import axiosInstance from "../utils/AxiosInstance.ts";
@@ -12,6 +12,9 @@ import {
 } from "../components/UtilComponents/MdEditor.tsx";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Post } from "../entity/Post/Post.ts";
+import { TagAutocomplete } from "../components/UtilComponents/TagAutocomplete.tsx";
+import { Constants, Tag } from "../utils/Constants.ts";
+import sweetAlert from "sweetalert";
 
 export const PostEditPage = () => {
     const editorRef = useRef<CustomEditorRef>(null);
@@ -19,16 +22,48 @@ export const PostEditPage = () => {
     const postId = searchParams.get("postId");
     const [post, setPost] = useState<Post>();
     const [isLoading, setLoading] = useState(true);
-    const [tags, setTags] = useState<string>();
     const [postContent, setPostContent] = useState<string | null>(null);
     const navigate = useNavigate();
+
+    // tags
+    const [suggestedTags, setSuggestedTags] = useState<Tag[]>([]);
+    const [selectedTags, setSelectedTags] = useState<(string)[]>([]);
+    const [inputValue, setInputValue] = useState<string>("");
+
+    const getTags = async () => {
+        axiosInstance
+            .get("/video/get/allTags")
+            .then((response: AxiosResponse<APIResponse<string[]>>) => {
+                if (response.data.code == ResponseCodes.SUCCESS) {
+                    // encapsulate response data (available tags) + fixed tags -> suggested tags
+                    const tmpTags: Tag[] = Constants.fixedTags.map((tag) => ({
+                        label: tag,
+                        fixed: true
+                    })).concat(response.data.data.map((tag) => ({ label: tag.trim(), fixed: false })));
+                    // Remove duplicates
+                    const uniqueTags = Array.from(new Set(tmpTags.map(tag => tag.label))).map(label => tmpTags.find(tag => tag.label === label)!);
+                    setSuggestedTags(uniqueTags);
+                } else {
+                    sweetAlert("Error", response.data.message, "error");
+                }
+            });
+    };
+
+    const handleChange = (_event: React.SyntheticEvent, newValue: (string | Tag)[]) => {
+        setSelectedTags(newValue.map((item) => typeof item === "string" ? item : item.label));
+    };
+
+    const handleInputChange = (_event: React.SyntheticEvent, newInputValue: string) => {
+        setInputValue(newInputValue);
+    };
+
 
     const handlePostSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const editorValue = editorRef.current?.getValue();
         const formData = new FormData(e.currentTarget);
         const title = formData.get("title");
-        const tags = formData.get("tags");
+        const tags = selectedTags.join(",");
         if (!title || !tags) {
             sweetAlert("Title and tags are required");
             return;
@@ -103,11 +138,10 @@ export const PostEditPage = () => {
                     setPost(response.data.data);
                     // createVidtor(response.data.data.postContent);
                     setPostContent(response.data.data.postContent);
-                    const tagArray = response.data.data.tags.map(
+                    const tagList = response.data.data.tags.map(
                         (tag) => tag.tagText
                     );
-                    const tagString = tagArray.join(",");
-                    setTags(tagString);
+                    setSelectedTags(tagList);
                     setLoading(false);
                 } else {
                     console.log(
@@ -125,6 +159,7 @@ export const PostEditPage = () => {
             // get post content
             getPost();
         } else {
+            getTags();
             setLoading(false);
         }
     }, []);
@@ -168,29 +203,34 @@ export const PostEditPage = () => {
                             </>
                         ) : (
                             <>
-                                <TextField
-                                    id="outlined-basic"
-                                    name="title"
-                                    label="Title"
-                                    defaultValue={post?.title || ""}
-                                    required
-                                    fullWidth
-                                />
-                                <TextField
-                                    id="outlined-basic"
-                                    name="tags"
-                                    label="Tags (separate by comma ,)"
-                                    defaultValue={tags ?? ""}
-                                    fullWidth
-                                />
-                                <Button
-                                    variant="contained"
-                                    endIcon={<Send />}
-                                    type="submit"
-                                    style={{ width: "20%" }}
-                                >
-                                    Send
-                                </Button>
+                                <Grid container spacing={2}>
+                                    <Grid item xs={5}>
+                                        <TextField
+                                            id="outlined-basic"
+                                            name="title"
+                                            label="Title"
+                                            defaultValue={post?.title || ""}
+                                            required
+                                            fullWidth
+                                        />
+                                    </Grid>
+                                    <Grid item xs={5}>
+
+                                        <TagAutocomplete suggestedTags={suggestedTags} selectedTags={selectedTags} inputValue={inputValue} handleChange={handleChange} handleInputChange={handleInputChange}/>
+                                    </Grid>
+                                    <Grid item xs={1.5}>
+                                        <Button
+                                            variant="contained"
+                                            endIcon={<Send />}
+                                            type="submit"
+                                            fullWidth
+                                            size="large"
+                                            style={{marginTop:'5px'}}
+                                        >
+                                            Send
+                                        </Button>
+                                    </Grid>
+                                </Grid>
                             </>
                         )}
                     </Stack>

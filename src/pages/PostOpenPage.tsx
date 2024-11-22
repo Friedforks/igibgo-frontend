@@ -42,7 +42,7 @@ export const PostOpenPage = () => {
             if (response.data.code == ResponseCodes.SUCCESS) {
                 response.data.data.uploadDate=formatDate(response.data.data.uploadDate);
                 setPost(response.data.data);
-                // createVidtor(response.data.data.postContent);
+                // createVditor(response.data.data.postContent);
                 setPostContent(response.data.data.postContent);
             } else {
                 console.log("Error in get post request: " + response.data.message);
@@ -60,6 +60,7 @@ export const PostOpenPage = () => {
         }).then((response: AxiosResponse<APIResponse<PostReply[]>>) => {
             // console.log("get replies response: ", response.data);
             if (response.data.code == ResponseCodes.SUCCESS) {
+                // wait 2 seconds
                 setReplies(response.data.data);
             } else {
                 console.log("Error in get replies request: " + response.data.message);

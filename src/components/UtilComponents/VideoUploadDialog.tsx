@@ -1,23 +1,23 @@
 import { AddOutlined, CloudUpload } from "@mui/icons-material";
 import {
+    Button,
+    CircularProgress,
     Dialog,
-    DialogTitle,
+    DialogActions,
     DialogContent,
     DialogContentText,
-    Button,
-    Typography,
-    TextField,
-    DialogActions,
+    DialogTitle,
     ImageList,
     ImageListItem,
     InputLabel,
     MenuItem,
     Select,
-    CircularProgress,
     Stack,
+    TextField,
+    Typography
 } from "@mui/material";
 import { LineProgressBuffer } from "../Upload/LineProgressBuffer.tsx";
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { CustomBackdrop } from "./CustomBackdrop.tsx";
 import { CollectionDialog } from "../Video/CollectionDialog.tsx";
 import { Collection } from "../../entity/Collection.ts";
@@ -27,6 +27,9 @@ import { FUser } from "../../entity/FUser.ts";
 import ResponseCodes from "../../entity/UtilEntity/ResponseCodes.ts";
 import axiosInstance from "../../utils/AxiosInstance.ts";
 import { checkLoginStatus } from "../../utils/LoginUtil.ts";
+import { Constants, Tag } from "../../utils/Constants.ts";
+import sweetAlert from "sweetalert";
+import { TagAutocomplete } from "./TagAutocomplete.tsx";
 
 type VideoUploadDialogProps = {
     videoUploadDialogOpen: boolean;
@@ -48,11 +51,50 @@ export const VideoUploadDialog = ({
 
     const [videoCoverGenerating, setVideoCoverGenerating] = useState(false);
 
+    // tags
+    const [suggestedTags, setSuggestedTags] = useState<Tag[]>([]);
+    const [selectedTags, setSelectedTags] = useState<(string)[]>([]);
+    const [inputValue, setInputValue] = useState<string>("");
+
+    // tags
+    const getTags = async () => {
+        axiosInstance
+            .get("/video/get/allTags")
+            .then((response: AxiosResponse<APIResponse<string[]>>) => {
+                if (response.data.code == ResponseCodes.SUCCESS) {
+                    // encapsulate response data (available tags) + fixed tags -> suggested tags
+                    const tmpTags: Tag[] = Constants.fixedTags.map((tag) => ({
+                        label: tag,
+                        fixed: true
+                    })).concat(response.data.data.map((tag) => ({ label: tag.trim(), fixed: false })));
+                    // Remove duplicates
+                    const uniqueTags = Array.from(new Set(tmpTags.map(tag => tag.label))).map(label => tmpTags.find(tag => tag.label === label)!);
+                    setSuggestedTags(uniqueTags);
+                } else {
+                    sweetAlert("Error", response.data.message, "error");
+                }
+            });
+    };
+
+    const handleChange = (_event: React.SyntheticEvent, newValue: (string | Tag)[]) => {
+        setSelectedTags(newValue.map((item) => typeof item === "string" ? item : item.label));
+    };
+
+    const handleInputChange = (_event: React.SyntheticEvent, newInputValue: string) => {
+        setInputValue(newInputValue);
+    };
+
+
     const handleVideoUpload = async (
         event: React.ChangeEvent<HTMLInputElement>
     ) => {
         const file = event.target.files ? event.target.files[0] : null;
         if (file) {
+            // check if file type is video
+            if (!file.type.startsWith("video/")) {
+                sweetAlert("Error", "Please upload a valid video file", "error");
+                return;
+            }
             setVideoCoverGenerating(true);
             setVideoFile(file);
             const url = URL.createObjectURL(file);
@@ -148,9 +190,6 @@ export const VideoUploadDialog = ({
     };
     const [collectionListUpdateFlag, setCollectionListUpdateFlag] =
         useState<boolean>(false);
-    useEffect(() => {
-        getCollections();
-    }, [collectionListUpdateFlag]);
 
     const [serverFileProcessing, setServerFileProcessing] = useState(false);
     const videoFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -176,8 +215,7 @@ export const VideoUploadDialog = ({
             sweetAlert("Error", "Please enter a title", "error");
         } else if (
             // no tags
-            !formData.get("tags") ||
-            (formData.get("tags") as string).trim() === ""
+            selectedTags.length===0
         ) {
             sweetAlert(
                 "Error",
@@ -196,7 +234,7 @@ export const VideoUploadDialog = ({
             data.append("video", videoFile as File);
             data.append("videoCover", blobs[snapshotChoice] as Blob);
             data.append("title", formData.get("title") as string);
-            data.append("tags", formData.get("tags") as string);
+            data.append("tags", selectedTags.join(","));
             data.append(
                 "authorId",
                 (
@@ -244,6 +282,12 @@ export const VideoUploadDialog = ({
                 });
         }
     };
+
+    useEffect(() => {
+        getCollections();
+        getTags();
+    }, [collectionListUpdateFlag]);
+
     return (
         <>
             {/* Video upload dialog */}
@@ -293,105 +337,100 @@ export const VideoUploadDialog = ({
                         first year student, then you haven't really understood."
                         -- Richard P. Feynman
                     </DialogContentText>
-                    <label>
-                        <Button
-                            component="span"
-                            variant="contained"
-                            tabIndex={-1}
-                            startIcon={<CloudUpload />}
-                        >
-                            Upload Video (H264)
-                        </Button>
-                        <input
-                            name="videoFile"
-                            type="file"
-                            hidden
-                            style={{ display: "none" }}
-                            onChange={handleVideoUpload}
-                        />
-                        <Typography
-                            variant="caption"
-                            style={{ marginLeft: "5px" }}
-                        >
-                            {videoFile && videoFile.name}
-                        </Typography>
-                    </label>
-                    <video ref={videoRef} style={{ display: "none" }} />
-                    <canvas ref={canvasRef} style={{ display: "none" }} />
-                    <ImageList cols={2} rowHeight={"auto"}>
-                        {imageURLs.map((url, index) => (
-                            <ImageListItem key={index}>
-                                <img
-                                    onClick={() => {
-                                        setSnapshotChoice(index);
-                                    }}
-                                    src={url}
-                                    alt={"frame" + index}
-                                    loading="lazy"
-                                    style={{
-                                        borderRadius: 5,
-                                        borderStyle:
-                                            snapshotChoice === index
-                                                ? "solid"
-                                                : "none",
-                                        borderColor: "#1976d2",
-                                    }}
-                                />
-                            </ImageListItem>
-                        ))}
-                    </ImageList>
+                    <Stack spacing={2} direction="column">
+                        <label>
+                            <Button
+                                component="span"
+                                variant="contained"
+                                tabIndex={-1}
+                                startIcon={<CloudUpload />}
+                            >
+                                Upload Video (H264)
+                            </Button>
+                            <input
+                                name="videoFile"
+                                type="file"
+                                hidden
+                                style={{ display: "none" }}
+                                onChange={handleVideoUpload}
+                            />
+                            <Typography
+                                variant="caption"
+                                style={{ marginLeft: "5px" }}
+                            >
+                                {videoFile && videoFile.name}
+                            </Typography>
+                        </label>
+                        <video ref={videoRef} style={{ display: "none" }} />
+                        <canvas ref={canvasRef} style={{ display: "none" }} />
+                        <ImageList cols={2} rowHeight={"auto"}>
+                            {imageURLs.map((url, index) => (
+                                <ImageListItem key={index}>
+                                    <img
+                                        onClick={() => {
+                                            setSnapshotChoice(index);
+                                        }}
+                                        src={url}
+                                        alt={"frame" + index}
+                                        loading="lazy"
+                                        style={{
+                                            borderRadius: 5,
+                                            borderStyle:
+                                                snapshotChoice === index
+                                                    ? "solid"
+                                                    : "none",
+                                            borderColor: "#1976d2",
+                                        }}
+                                    />
+                                </ImageListItem>
+                            ))}
+                        </ImageList>
 
-                    <TextField
-                        autoFocus
-                        required
-                        margin="dense"
-                        name="title"
-                        label="Video Title:"
-                        type="text"
-                        fullWidth
-                        variant="standard"
-                    />
-                    <TextField
-                        autoFocus
-                        required
-                        margin="dense"
-                        name="tags"
-                        label="Tags (separate with comma):"
-                        type="text"
-                        fullWidth
-                        variant="standard"
-                    />
-                    <label>
-                        <InputLabel id="demo-multiple-chip-label">
-                            Collection:
-                        </InputLabel>
-                        <Select
-                            name="collection"
-                            value={collectionValue}
+                        <TextField
+                            autoFocus
+                            required
+                            margin="dense"
+                            name="title"
+                            label="Video Title:"
+                            type="text"
                             fullWidth
-                            onChange={(event) => {
-                                setCollectionValue(
-                                    event.target.value as string
-                                );
+                            variant="standard"
+                        />
+                        <TagAutocomplete suggestedTags={suggestedTags} selectedTags={selectedTags}
+                                         inputValue={inputValue} handleChange={handleChange}
+                                         handleInputChange={handleInputChange} />
+                        <label>
+                            <InputLabel id="demo-multiple-chip-label">
+                                Collection:
+                            </InputLabel>
+                            <Select
+                                name="collection"
+                                value={collectionValue}
+                                fullWidth
+                                onChange={(event) => {
+                                    setCollectionValue(
+                                        event.target.value as string
+                                    );
+                                }}
+                            >
+                                {availableCollections.map((collection) => (
+                                    <MenuItem value={collection.collectionId} key={collection.collectionId}>
+                                        {collection.collectionName}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </label>
+                        <Button
+                            variant="outlined"
+                            startIcon={<AddOutlined />}
+                            sx={{ marginTop: "10px" }}
+                            onClick={() => {
+                                setAddCollectionDialogOpen(true);
                             }}
                         >
-                            {availableCollections.map((collection) => (
-                                <MenuItem value={collection.collectionId} key={collection.collectionId}>
-                                    {collection.collectionName}
-                                </MenuItem>
-                            ))}
-                        </Select>
-                    </label>
-                    <Button
-                        variant="outlined"
-                        startIcon={<AddOutlined />}
-                        sx={{ marginTop: "10px" }}
-                        onClick={() => {
-                            setAddCollectionDialogOpen(true);
-                        }}
-                    >
-                        Add collection
-                    </Button>
+                            Add collection
+                        </Button>
+                    </Stack>
                 </DialogContent>
                 <DialogActions>
                     <Button

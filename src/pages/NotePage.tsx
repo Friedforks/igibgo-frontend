@@ -6,7 +6,6 @@ import ResponseCodes from "../entity/UtilEntity/ResponseCodes.ts";
 import sweetAlert from "sweetalert";
 import { Note } from "../entity/Note/Note.ts";
 import {
-    Autocomplete,
     Box,
     Breadcrumbs,
     Button,
@@ -33,6 +32,7 @@ import { NoteUploadDialog } from "../components/Note/NoteUploadDialog.tsx";
 import { useNavigate } from "react-router-dom";
 import { NoteList } from "../components/Note/NoteList.tsx";
 import { Constants, Tag } from "../utils/Constants.ts";
+import { TagAutocomplete } from "../components/UtilComponents/TagAutocomplete.tsx";
 
 
 export const NotePage = () => {
@@ -192,60 +192,7 @@ export const NotePage = () => {
 
                 <Grid item xs={5}>
                     <FormControl sx={{ m: 1 }} fullWidth>
-                        <Autocomplete
-                            multiple
-                            id="tags-input"
-                            options={suggestedTags}
-                            value={selectedTags}
-                            onChange={handleChange}
-                            inputValue={inputValue}
-                            onInputChange={handleInputChange}
-                            getOptionLabel={(option) => typeof option === "string" ? option : option.label}
-                            renderInput={(params) => (
-                                <TextField
-                                    {...params}
-                                    label="Tags"
-                                    helperText="Press enter to search for tags"
-                                />
-                            )}
-                            freeSolo
-                        />
-
-                        {/*<Select*/}
-                        {/*    labelId="demo-multiple-chip-label"*/}
-                        {/*    id="demo-multiple-chip"*/}
-                        {/*    multiple*/}
-                        {/*    value={selectedTags}*/}
-                        {/*    onChange={(event: SelectChangeEvent<string[]>) =>*/}
-                        {/*        handleTagSelectChange(event)*/}
-                        {/*    }*/}
-                        {/*    input={*/}
-                        {/*        <OutlinedInput*/}
-                        {/*            id="select-multiple-chip"*/}
-                        {/*            label="Chip"*/}
-                        {/*        />*/}
-                        {/*    }*/}
-                        {/*    renderValue={(selected: string[]) => (*/}
-                        {/*        <Box*/}
-                        {/*            sx={{*/}
-                        {/*                display: "flex",*/}
-                        {/*                flexWrap: "wrap",*/}
-                        {/*                gap: 0.5,*/}
-                        {/*            }}*/}
-                        {/*        >*/}
-                        {/*            {selected.map((value: string) => (*/}
-                        {/*                <Chip key={value} label={value} />*/}
-                        {/*            ))}*/}
-                        {/*        </Box>*/}
-                        {/*    )}*/}
-                        {/*>*/}
-                        {/*    {fixedTags.map((name, id) => (*/}
-                        {/*        <MenuItem key={id} value={name}>*/}
-                        {/*            {name}*/}
-                        {/*        </MenuItem>*/}
-                        {/*    ))}*/}
-                        {/*</Select>*/}
-
+                        <TagAutocomplete suggestedTags={suggestedTags} selectedTags={selectedTags} inputValue={inputValue} handleChange={handleChange} handleInputChange={handleInputChange} helperText="Separate tags by pressing Enter"/>
                     </FormControl>
                 </Grid>
             </Grid>
