@@ -131,6 +131,7 @@ export const PostEditPage = () => {
             .get("/forum/get/postId", {
                 params: {
                     postId: postId,
+                    token: localStorage.getItem("token")
                 },
             })
             .then((response: AxiosResponse<APIResponse<Post>>) => {
@@ -154,12 +155,12 @@ export const PostEditPage = () => {
             });
     };
     useEffect(() => {
+        getTags();
         if (postId) {
             // edit post
             // get post content
             getPost();
         } else {
-            getTags();
             setLoading(false);
         }
     }, []);

@@ -1,8 +1,8 @@
-import {useParams} from "react-router-dom";
-import {useEffect, useRef, useState} from "react";
-import {Post} from "../entity/Post/Post.ts";
+import { useParams } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
+import { Post } from "../entity/Post/Post.ts";
 import axiosInstance from "../utils/AxiosInstance.ts";
-import {AxiosResponse} from "axios";
+import { AxiosResponse } from "axios";
 import APIResponse from "../entity/UtilEntity/APIResponse.ts";
 import ResponseCodes from "../entity/UtilEntity/ResponseCodes.ts";
 import {
@@ -16,13 +16,13 @@ import {
     Send,
     VisibilityOutlined
 } from "@mui/icons-material";
-import {ShortUserInfoDisplay} from "../components/UtilComponents/ShortUserInfoDisplay.tsx";
+import { ShortUserInfoDisplay } from "../components/UtilComponents/ShortUserInfoDisplay.tsx";
 import "vditor/dist/index.css";
-import {PostReplyList} from "../components/Post/PostReplyList.tsx";
-import {PostReply} from "../entity/Post/PostReply.ts";
-import {MdEditor, CustomEditorRef} from "../components/UtilComponents/MdEditor.tsx";
-import {MdPreview} from "../components/UtilComponents/MdPreview.tsx";
-import {formatDate} from "../utils/DateUtil.ts";
+import { PostReplyList } from "../components/Post/PostReplyList.tsx";
+import { PostReply } from "../entity/Post/PostReply.ts";
+import { MdEditor, CustomEditorRef } from "../components/UtilComponents/MdEditor.tsx";
+import { MdPreview } from "../components/UtilComponents/MdPreview.tsx";
+import { formatDate } from "../utils/DateUtil.ts";
 
 export const PostOpenPage = () => {
     const param = useParams();
@@ -40,7 +40,7 @@ export const PostOpenPage = () => {
             }
         }).then((response: AxiosResponse<APIResponse<Post>>) => {
             if (response.data.code == ResponseCodes.SUCCESS) {
-                response.data.data.uploadDate=formatDate(response.data.data.uploadDate);
+                response.data.data.uploadDate = formatDate(response.data.data.uploadDate);
                 setPost(response.data.data);
                 // createVditor(response.data.data.postContent);
                 setPostContent(response.data.data.postContent);
@@ -49,8 +49,8 @@ export const PostOpenPage = () => {
             }
         }).catch((error) => {
             console.log("Error in get post request: " + error);
-        })
-    }
+        });
+    };
 
     const getReplies = async () => {
         axiosInstance.get("/forum/reply/primary", {
@@ -67,8 +67,8 @@ export const PostOpenPage = () => {
             }
         }).catch((error) => {
             console.log("Error in get replies request: " + error);
-        })
-    }
+        });
+    };
 
     const [newReplyDialogOpen, setNewReplyDialogOpen] = useState(false);
 
@@ -76,7 +76,7 @@ export const PostOpenPage = () => {
 
     const handleNewReply = () => {
         setNewReplyDialogOpen(true);
-    }
+    };
 
     const handleReplySubmit = () => {
         const replyContent = editorRef.current?.getValue() as string;
@@ -95,25 +95,25 @@ export const PostOpenPage = () => {
             if (response.data.code == ResponseCodes.SUCCESS) {
                 setNewReplyDialogOpen(false);
                 setDataUpdateRequired(!dataUpdateRequired);
-                sweetAlert("Success!", "Reply sent successfully", "success").then(() => window.location.reload())
+                sweetAlert("Success!", "Reply sent successfully", "success").then(() => window.location.reload());
             } else {
                 sweetAlert("Error", response.data.message, "error");
             }
         }).catch((error) => {
             sweetAlert("Error", error, "error");
-        })
-    }
+        });
+    };
 
     useEffect(() => {
         getPost().then(() => {
-            getReplies()
-        })
-    }, [])
+            getReplies();
+        });
+    }, []);
 
     return (
         <>
-            <div style={{maxWidth:"100%"}}>
-                <Grid item xs={4} style={{marginBottom: '2rem'}}>
+            <div style={{ maxWidth: "100%" }}>
+                <Grid item xs={4} style={{ marginBottom: "2rem" }}>
                     <ShortUserInfoDisplay
                         userId={post?.author.userId}
                         dataUpdateRequired={dataUpdateRequired}
@@ -122,39 +122,38 @@ export const PostOpenPage = () => {
                 </Grid>
                 {/* Title section */}
                 <Typography variant="h5">{post?.title}</Typography>
-                <div style={{marginTop: "5px"}}>
+                <div style={{ marginTop: "5px" }}>
                     <Stack direction="row" spacing={2} id="header-row">
                         <div>
                             <Stack direction="row" spacing={0.5}>
-                                <VisibilityOutlined fontSize="small"/>
+                                <VisibilityOutlined fontSize="small" />
                                 <span>{post?.viewCount}</span>
                             </Stack>
                         </div>
                         <div>{post?.uploadDate.toString()}</div>
                     </Stack>
                     {/*    render post markdown*/}
-                    <MdPreview content={postContent} maxWidth={window.innerWidth*0.9}/>
+                    <MdPreview content={postContent} maxWidth={window.innerWidth * 0.9} />
                 </div>
                 {/* replies */}
-                <Divider textAlign="left" style={{marginTop: "1rem"}}>
-                    <Chip label="Replies" size="small"/>
+                <Divider textAlign="left" style={{ marginTop: "1rem" }}>
+                    <Chip label="Replies" size="small" />
                 </Divider>
                 <Button variant="contained" onClick={handleNewReply}>New reply</Button>
                 <PostReplyList
                     replies={replies ?? []}
                 />
 
-                {/*Dialogs*/}
                 <Dialog open={newReplyDialogOpen} onClose={() => {
-                    setNewReplyDialogOpen(false)
+                    setNewReplyDialogOpen(false);
                 }} maxWidth="md" fullWidth>
                     <Stack direction="row" margin="1rem" justifyContent="space-between">
                         <Typography variant="h6">New Reply</Typography>
-                        <Button variant="contained" onClick={handleReplySubmit} endIcon={<Send/>}>Send</Button>
+                        <Button variant="contained" onClick={handleReplySubmit} endIcon={<Send />}>Send</Button>
                     </Stack>
-                    <MdEditor ref={editorRef}/>
+                    <MdEditor ref={editorRef} />
                 </Dialog>
             </div>
         </>
-    )
-}
+    );
+};
