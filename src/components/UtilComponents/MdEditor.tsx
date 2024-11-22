@@ -118,7 +118,7 @@ export const MdEditor = forwardRef<CustomEditorRef, CustomEditorProps>(
                     type: "markdown",
                 },
                 cache: {
-                    enable: false,
+                    enable: true,
                 },
                 placeholder,
                 outline: {
