@@ -272,6 +272,7 @@ export const NoteOpenPage = () => {
                 }}
             >
                 <Grid item xs={8}>
+
                     {/* Title section */}
                     <Typography variant="h5">{currentNote?.title}</Typography>
                     <div style={{ marginTop: "5px" }}>
@@ -303,8 +304,9 @@ export const NoteOpenPage = () => {
                             height={height * 0.8}
                         ></iframe>
                     </div>
-                    {/* comments */}
                 </Grid>
+
+                {/* Comment section */}
                 <Grid item xs={4}>
                     <ShortUserInfoDisplay
                         userId={currentNote?.author.userId}
@@ -368,9 +370,11 @@ export const NoteOpenPage = () => {
                             </Stack>
                         </div>
                     </Stack>
+
                     <Divider textAlign="left" style={{ marginTop: "20px" }}>
                         <Chip label="Comments" size="small" />
                     </Divider>
+
                     {/* new reply */}
                     <form onSubmit={replySubmit}>
                         {replyClicked && (
@@ -396,6 +400,7 @@ export const NoteOpenPage = () => {
                             </Fade>
                         )}
                     </form>
+
                     {/* Replies */}
                     <List>
                         {replies.map((reply: NoteReply) => (
@@ -446,6 +451,8 @@ export const NoteOpenPage = () => {
                     </List>
                 </Grid>
             </Grid>
+
+            {/* Dialogs  */}
             <NoteBookmarkDialog
                 open={bookmarkDialogOpen}
                 setOpen={setBookmarkDialogOpen}

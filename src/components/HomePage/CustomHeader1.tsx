@@ -27,6 +27,7 @@ import { Description, Forum, Home, SmartDisplay } from "@mui/icons-material";
 import { RegisterDialog1 } from "./RegisterDialog1";
 import { RegisterDialog2 } from "./RegisterDialog2";
 import {CustomBackdrop} from "../UtilComponents/CustomBackdrop.tsx";
+import { Constants } from "../../utils/Constants.ts";
 
 const drawerWidth = 240;
 
@@ -253,7 +254,7 @@ const CustomHeader1: React.FC<CustomHeader1Props> = ({ children: content }) => {
                             <MenuIcon />
                         </IconButton>
                         <Typography variant="h6" noWrap component="div">
-                            Welcome to Study Hive!
+                            Welcome to Study Hive! ({Constants.version})
                         </Typography>
                         <div style={{ position: "absolute", right: "1rem" }}>
                             {!loginStatus && (
