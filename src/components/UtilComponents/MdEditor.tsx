@@ -30,26 +30,50 @@ export const MdEditor = forwardRef<CustomEditorRef, CustomEditorProps>(
         const [vd, setVd] = useState<Vditor>();
         const vdRef = useRef<Vditor | null>(null);
 
+
         useImperativeHandle(ref, () => ({
             getValue: () => vdRef.current?.getValue(),
             setValue: async (value: string) => {
                 if (!vdRef.current) {
-                    // 等待 Vditor 实例创建完成
-                    await new Promise<void>((resolve) => {
-                        const checkVd = () => {
-                            if (vdRef.current) {
-                                console.log("Vditor instance created");
-                                resolve();
-                            } else {
-                                setTimeout(checkVd, 100);
-                            }
-                        };
-                        checkVd();
-                    });
+                    await waitForVditor();
                 }
                 vdRef.current?.setValue(value);
             },
         }));
+
+        const waitForVditor = () => {
+            return new Promise<void>((resolve) => {
+                const checkVd = () => {
+                    if (vdRef.current) {
+                        resolve();
+                    } else {
+                        requestAnimationFrame(checkVd);
+                    }
+                };
+                checkVd();
+            });
+        };
+
+        // useImperativeHandle(ref, () => ({
+        //     getValue: () => vdRef.current?.getValue(),
+        //     setValue: async (value: string) => {
+        //         if (!vdRef.current) {
+        //             // wait for Vditor to initialize
+        //             await new Promise<void>((resolve) => {
+        //                 const checkVd = () => {
+        //                     if (vdRef.current) {
+        //                         console.log("Vditor instance created");
+        //                         resolve();
+        //                     } else {
+        //                         setTimeout(checkVd, 100);
+        //                     }
+        //                 };
+        //                 checkVd();
+        //             });
+        //         }
+        //         vdRef.current?.setValue(value);
+        //     },
+        // }));
 
         const handleImageUpload = (
             file: File,

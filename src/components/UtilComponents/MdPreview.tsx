@@ -304,6 +304,7 @@ export const MdPreview: React.FC<MdPreviewProps> = ({
                     fontFamily: "Roboto"
                 }}
             />
+            {/*backdrop before Vditor loaded*/}
         </div>
     );
 };
